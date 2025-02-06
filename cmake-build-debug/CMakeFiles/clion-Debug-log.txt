@@ -1,5 +1,0 @@
-/snap/clion/314/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/314/bin/ninja/linux/x64/ninja -G Ninja -S /home/knoblvit/ownCloud/DP/code/TSP -B /home/knoblvit/ownCloud/DP/code/TSP/cmake-build-debug
--- Using the multi-header code from /home/knoblvit/ownCloud/DP/code/TSP/lib/json/include/
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/knoblvit/ownCloud/DP/code/TSP/cmake-build-debug
