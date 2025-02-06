@@ -18,7 +18,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 include_directories(include)
 
 set(COMMON
-        src/common/optal_comms.cpp)
+    src/common/optal_comms.cpp
+    src/common/portfolio.cpp
+)
 
 add_executable(TSP-Heuristic
         src/main.cpp

@@ -15,13 +15,17 @@ OptalComms::OptalComms(const std::shared_ptr<SolutionSerializer> &serializer){
 
 void OptalComms::initialize(HeuristicPortfolio *portfolio){
   portfolio_ = portfolio;
+  terminate_ = false;
+  best_solution_ = nullptr;
 }
 
 void OptalComms::run() {
   while(!terminate_){
     std::string solution_string;
     std::shared_ptr<Solution> new_solution = nullptr;
-    if(std::getline(std::cin, solution_string)){ //received solution from Optal
+
+    if(std::getline(std::cin, solution_string)){
+      //received solution from Optal
       new_solution = serializer_->parseSolution(solution_string);
       std::lock_guard<std::mutex> lock(solution_lock_);
       if (best_solution_ == nullptr || new_solution->objective < best_solution_->objective) {
@@ -30,14 +34,15 @@ void OptalComms::run() {
       else
         new_solution = nullptr;
     }
-    else{ //optal closed Pipe
-      terminate_ = true;
-      portfolio_->terminate();
+    else{
+      //optal closed Pipe
+      if(portfolio_ != nullptr)
+        portfolio_->terminate();
+      this->terminate();
     }
 
     //received solution is BSF solution
-    if(new_solution != nullptr)
-      portfolio_->acceptSolution(new_solution);
+    sendSolution(new_solution);
   }
 }
 
@@ -45,8 +50,18 @@ void OptalComms::acceptSolution(std::shared_ptr<Solution> solution) {
   std::lock_guard<std::mutex> lock(solution_lock_);
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;
+    const std::string solution_string = serializer_->serializeSolution(solution);
+    std::cout << solution << std::endl;
   }
 }
+
 void OptalComms::terminate() {
   terminate_ = true;
+  portfolio_ = nullptr;
+}
+
+inline void OptalComms::sendSolution(const std::shared_ptr<Solution>& solution) {
+  if(solution == nullptr || portfolio_ == nullptr)
+    return;
+  portfolio_->acceptSolution(solution);
 }

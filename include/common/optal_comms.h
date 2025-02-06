@@ -11,11 +11,12 @@
 class OptalComms: public Heuristic{
 private:
   HeuristicPortfolio *portfolio_;
-  std::atomic<bool> terminate_;
+  std::atomic<bool> terminate_{};
   std::shared_ptr<Solution> best_solution_;
   std::shared_ptr<SolutionSerializer> serializer_;
   std::mutex solution_lock_;
-  std::mutex terminate_lock;
+
+  void sendSolution(const std::shared_ptr<Solution>& solution);
 
 public:
   OptalComms(const std::shared_ptr<SolutionSerializer> &serializer);

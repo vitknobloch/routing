@@ -7,6 +7,7 @@
 #include "heuristic.h"
 #include "solution.h"
 #include <memory>
+#include <mutex>
 #include <vector>
 
 class HeuristicPortfolio{
@@ -19,15 +20,18 @@ private:
 
   /** Current best-so-far solution */
   std::shared_ptr<Solution> best_solution_;
+  std::mutex solution_lock_;
 
   /** Sends current best-so-far solution to stdout and to the improving heuristics */
   void sendSolution();
 
+  void startThread(std::shared_ptr<Heuristic> heuristic);
+
 public:
   HeuristicPortfolio();
   ~HeuristicPortfolio();
-  void addImprovingHeuristic(std::shared_ptr<Heuristic> heuristic);
-  void addConstructiveHeuristic(std::shared_ptr<Heuristic> heuristic);
+  void addImprovingHeuristic(const std::shared_ptr<Heuristic>& heuristic);
+  void addConstructiveHeuristic(const std::shared_ptr<Heuristic>& heuristic);
   void start();
   void terminate();
 
