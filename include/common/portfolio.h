@@ -29,7 +29,6 @@ private:
 
 public:
   HeuristicPortfolio();
-  ~HeuristicPortfolio();
   void addImprovingHeuristic(const std::shared_ptr<Heuristic>& heuristic);
   void addConstructiveHeuristic(const std::shared_ptr<Heuristic>& heuristic);
   void start();
