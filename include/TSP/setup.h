@@ -1,0 +1,14 @@
+//
+// Created by knoblvit on 8.2.25.
+//
+
+#pragma once
+#include "common/portfolio.h"
+#include "json.hpp"
+
+using JSON = nlohmann::json;
+
+class SetupTSP{
+public:
+  std::shared_ptr<HeuristicPortfolio> preparePortfolio(const JSON &config, const char* instance_filename);
+};
