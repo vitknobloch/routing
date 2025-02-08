@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(TSP-Heuristic)
+project(Heuristic)
 
 if(${PROJECT_IS_TOP_LEVEL})
     set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -27,11 +27,11 @@ set(TSP
 
 )
 
-add_executable(TSP-Heuristic
+add_executable(Heuristic
         src/main.cpp
         ${COMMON}
         ${TSP}
 )
 
-target_link_libraries(TSP-Heuristic PRIVATE nlohmann_json::nlohmann_json)
-target_include_directories(TSP-Heuristic PRIVATE lib/json/include/nlohmann)
+target_link_libraries(Heuristic PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories(Heuristic PRIVATE lib/json/include/nlohmann)
