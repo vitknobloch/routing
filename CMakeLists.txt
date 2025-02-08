@@ -20,10 +20,11 @@ include_directories(include)
 set(COMMON
     src/common/optal_comms.cpp
     src/common/portfolio.cpp
+    src/common/serializer.cpp
 )
 
 set(TSP
-    src/common/TSP/TSP_serializer.cpp
+
 )
 
 add_executable(TSP-Heuristic

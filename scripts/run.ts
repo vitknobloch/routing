@@ -1,6 +1,6 @@
 import { defineModel } from "./modeller.js";
 import { parse } from "./parsetsp.js";
-import { parseSolution, serializeSolution } from "./solutionParser.js";
+import { parseSolution, serializeSolution } from "./solutionParserTSP.js";
 import * as CP from '@scheduleopt/optalcp';
 import { spawn } from 'child_process';
 import * as readline from 'node:readline';

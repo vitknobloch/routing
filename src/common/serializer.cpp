@@ -1,13 +1,13 @@
 //
 // Created by knoblvit on 7.2.25.
 //
-#include "common/TSP/TSP_serializer.h"
+#include "common/serializer.h"
 #include <sstream>
 
 using JSON = nlohmann::json;
 
 std::shared_ptr<Solution>
-SolutionSerializerTSP::parseSolution(std::string solution_string) {
+SolutionSerializer::parseSolution(std::string solution_string) {
   auto solution = std::make_shared<Solution>();
 
   JSON solution_json;
@@ -27,7 +27,7 @@ SolutionSerializerTSP::parseSolution(std::string solution_string) {
 }
 
 std::string
-SolutionSerializerTSP::serializeSolution(std::shared_ptr<Solution> &solution) {
+SolutionSerializer::serializeSolution(std::shared_ptr<Solution> &solution) {
   std::vector<JSON> routes_json;
   routes_json.reserve(solution->routes.size());
   for(const auto &route : solution->routes){
@@ -43,7 +43,7 @@ SolutionSerializerTSP::serializeSolution(std::shared_ptr<Solution> &solution) {
   return solution_json.dump();
 }
 
-nlohmann::json SolutionSerializerTSP::serializeNode(const SolutionNode &node) {
+nlohmann::json SolutionSerializer::serializeNode(const SolutionNode &node) {
   JSON node_json;
   node_json["idx"] = node.idx;
   node_json["start_time"] = node.start_time;
@@ -52,7 +52,7 @@ nlohmann::json SolutionSerializerTSP::serializeNode(const SolutionNode &node) {
 }
 
 nlohmann::json
-SolutionSerializerTSP::serializeRoute(const SolutionRoute &route) {
+SolutionSerializer::serializeRoute(const SolutionRoute &route) {
   std::vector<JSON> nodes_json;
   nodes_json.reserve(route.route_nodes.size());
   for(const auto & node: route.route_nodes){
@@ -67,7 +67,7 @@ SolutionSerializerTSP::serializeRoute(const SolutionRoute &route) {
   return route_json;
 }
 
-SolutionNode SolutionSerializerTSP::parseNode(const nlohmann::json &node_json) {
+SolutionNode SolutionSerializer::parseNode(const nlohmann::json &node_json) {
   SolutionNode node;
   node.idx = node_json.at("idx");
   node.start_time = node_json.at("start_time");
@@ -76,7 +76,7 @@ SolutionNode SolutionSerializerTSP::parseNode(const nlohmann::json &node_json) {
 }
 
 SolutionRoute
-SolutionSerializerTSP::parseRoute(const nlohmann::json &route_json) {
+SolutionSerializer::parseRoute(const nlohmann::json &route_json) {
   SolutionRoute route;
   route.demand = route_json.at("demand");
   route.end_time = route_json.at("end_time");
@@ -86,7 +86,7 @@ SolutionSerializerTSP::parseRoute(const nlohmann::json &route_json) {
   const auto &nodes_json = route_json.at("route_nodes");
   size_t node_count = nodes_json.size();
   for(uint i = 0; i < node_count; i++){
-      route.route_nodes.push_back(parseNode(nodes_json[i]));
+    route.route_nodes.push_back(parseNode(nodes_json[i]));
   }
   return route;
 }
