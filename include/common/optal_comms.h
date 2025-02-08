@@ -19,7 +19,7 @@ private:
   void sendSolution(const std::shared_ptr<Solution>& solution);
 
 public:
-  OptalComms(const std::shared_ptr<SolutionSerializer> &serializer);
+  explicit OptalComms(const std::shared_ptr<SolutionSerializer> &serializer);
   void initialize(HeuristicPortfolio *portfolio) override;
   void run() override;
   void acceptSolution(std::shared_ptr<Solution> solution) override;

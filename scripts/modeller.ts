@@ -1,6 +1,6 @@
-import { ParseResult } from "./parsetsp";
+import { ParseResult } from "./parsetsp.js";
 import * as CP from '@scheduleopt/optalcp';
-import { makeModelName } from "./utils";
+import { makeModelName } from "./utils.js";
 
 export type TspVars = {
     visits: CP.IntervalVar[]

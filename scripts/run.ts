@@ -1,6 +1,6 @@
-import { defineModel } from "./modeller";
-import { parse } from "./parsetsp";
-import { parseSolution, serializeSolution } from "./solutionParser";
+import { defineModel } from "./modeller.js";
+import { parse } from "./parsetsp.js";
+import { parseSolution, serializeSolution } from "./solutionParser.js";
 import * as CP from '@scheduleopt/optalcp';
 import { spawn } from 'child_process';
 import * as readline from 'node:readline';
@@ -19,7 +19,7 @@ let seed = params.randomSeed == undefined ? 0 : params.randomSeed;
 
 let instance = parse(filename, {});
 
-let heuristics = spawn('./build/bin/TSP-Heuristic', [filename, "log.txt", `${seed}`], { windowsHide: true });
+let heuristics = spawn('./build/TSP-Heuristic', [filename, "log.txt", `${seed}`], { windowsHide: true });
 process.on('exit', () => { heuristics.kill(); });
 let heuristicsPipe = readline.createInterface({ input: heuristics.stdout, terminal: false, crlfDelay: Infinity });
 let heuristicsDebugPipe = readline.createInterface({ input: heuristics.stderr, terminal: false, crlfDelay: Infinity });

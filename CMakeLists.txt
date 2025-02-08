@@ -22,9 +22,14 @@ set(COMMON
     src/common/portfolio.cpp
 )
 
+set(TSP
+    src/common/TSP/TSP_serializer.cpp
+)
+
 add_executable(TSP-Heuristic
         src/main.cpp
         ${COMMON}
+        ${TSP}
 )
 
 target_link_libraries(TSP-Heuristic PRIVATE nlohmann_json::nlohmann_json)

@@ -5,3 +5,4 @@ data
 logs
 .idea
 package-lock.json
+scripts/*.js

@@ -1,5 +1,5 @@
-import { TspVars } from "./modeller";
-import { ParseResult } from "./parsetsp";
+import { TspVars } from "./modeller.js";
+import { ParseResult } from "./parsetsp.js";
 import * as CP from '@scheduleopt/optalcp';
 
 export function parseSolution(solution_string: string, vars: TspVars, instance: ParseResult): CP.Solution {

@@ -3,6 +3,7 @@
 //
 #include "common/portfolio.h"
 
+#include <iostream>
 #include <thread>
 
 HeuristicPortfolio::HeuristicPortfolio() :
@@ -58,6 +59,7 @@ void HeuristicPortfolio::acceptSolution(std::shared_ptr<Solution> solution) {
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;
   }
+  std::cerr << best_solution_->objective << std::endl;
   sendSolution();
 }
 

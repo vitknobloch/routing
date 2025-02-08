@@ -4,6 +4,8 @@
 
 #pragma once
 
+class Heuristic;
+
 #include "heuristic.h"
 #include "solution.h"
 #include <memory>
