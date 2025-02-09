@@ -21,6 +21,8 @@ set(COMMON
     src/common/optal_comms.cpp
     src/common/portfolio.cpp
     src/common/serializer.cpp
+    src/common/routing_instance.cpp
+    src/common/tsplib_loader.cpp
 )
 
 set(TSP
