@@ -20,4 +20,6 @@ public:
   virtual void run() = 0;
   /** Asynchronously set termination condition so that the heuristic exits after the current iteration */
   virtual void terminate() = 0;
+
+  virtual ~Heuristic() = default;
 };

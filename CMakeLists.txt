@@ -23,16 +23,27 @@ set(COMMON
     src/common/serializer.cpp
     src/common/routing_instance.cpp
     src/common/tsplib_loader.cpp
+    src/common/solomon_loader.cpp
 )
 
 set(TSP
+    src/TSP/setup.cpp
+)
 
+set(CVRP
+    src/CVRP/setup.cpp
+)
+
+set(VRP-TW
+    src/VRP-TW/setup.cpp
 )
 
 add_executable(Heuristic
         src/main.cpp
         ${COMMON}
         ${TSP}
+        ${CVRP}
+        ${VRP-TW}
 )
 
 target_link_libraries(Heuristic PRIVATE nlohmann_json::nlohmann_json)

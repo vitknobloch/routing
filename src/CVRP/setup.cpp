@@ -1,14 +1,14 @@
 //
 // Created by knoblvit on 9.2.25.
 //
-#include "TSP/setup.h"
+#include "CVRP//setup.h"
 
 #include "common/routing_instance.h"
 #include "common/optal_comms.h"
 
 
 std::shared_ptr<HeuristicPortfolio>
-SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
+SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto portfolio = std::make_shared<HeuristicPortfolio>();
   RoutingInstance instance;
   instance.loadTSPlibInstance(instance_filename);

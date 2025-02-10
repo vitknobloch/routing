@@ -10,7 +10,8 @@
 enum ProblemType{
   TSP,
   ATSP,
-  CVRP
+  CVRP,
+  VRPTW
 };
 
 enum EdgeWeightType{
@@ -71,6 +72,7 @@ private:
   std::shared_ptr<unsigned int[]> matrix_;
 
   class TSPlibLoader;
+  class SolomonLoader;
 
 
 public:

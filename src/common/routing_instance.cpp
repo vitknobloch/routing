@@ -3,6 +3,7 @@
 //
 #include "common/routing_instance.h"
 #include "common/tsplib_loader.h"
+#include "common/solomon_loader.h"
 
 
 RoutingInstance::RoutingInstance() {
@@ -42,7 +43,14 @@ void RoutingInstance::loadTSPlibInstance(const char *filename) {
 }
 
 void RoutingInstance::loadSolomonInstance(const char *filename) {
+  std::ifstream file(filename);
+  if(!file.is_open()){
+    std::cerr << "Error opening file: " << filename << std::endl;
+    exit(100);
+  }
 
+  SolomonLoader::loadHeader(*this, file);
+  SolomonLoader::loadNodes(*this, file);
 }
 
 
