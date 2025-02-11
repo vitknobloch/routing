@@ -18,6 +18,5 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto optalComms = std::make_shared<OptalComms>(serializer);
   portfolio->addImprovingHeuristic(optalComms);
 
-
   return portfolio;
 }

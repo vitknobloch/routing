@@ -2,7 +2,9 @@
 // Created by knoblvit on 6.2.25.
 //
 
+#include "CVRP/setup.h"
 #include "TSP/setup.h"
+#include "VRP-TW/setup.h"
 #include "common/optal_comms.h"
 #include "common/portfolio.h"
 #include "common/serializer.h"
@@ -60,10 +62,12 @@ int main(int argc, char* argv[]){
     portfolio = setup.preparePortfolio(config_json["heuristics"], instance_filename);
   }
   else if(config_json["problem"] == "CVRP"){
-
+    auto setup = SetupCVRP();
+    portfolio = setup.preparePortfolio(config_json["heuristics"], instance_filename);
   }
   else if(config_json["problem"] == "VRP-TW"){
-
+    auto setup = SetupVRPTW();
+    portfolio = setup.preparePortfolio(config_json["heuristics"], instance_filename);
   }
   else{
     std::cerr << "Unsupported problem type: " << config_json["problem"] << std::endl;
