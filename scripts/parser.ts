@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
 import * as utils from './utils.js';
+import { readFile } from 'fs';
 
 // An auxiliary function for the GEO distance function.
 function toRadians(x: number) {
@@ -19,6 +20,11 @@ export type ParseResult = {
     demands?: number[],
     capacity?: number,
     depots?: number[],
+    nbVehicles?: number,
+    // For VRP-TW:
+    ready_times?: number[],
+    due_times?: number[],
+    service_times?: number[]
 }
 
 export type ParseParameters = {
@@ -28,7 +34,7 @@ export type ParseParameters = {
     forceCeil?: boolean,
 }
 
-export function parse(filename: string, params: ParseParameters): ParseResult {
+export function parseTspLib(filename: string, params: ParseParameters): ParseResult {
     let lines = utils.readFile(filename).trim().split('\n');
     /*
     Input file looks like this:
@@ -54,6 +60,7 @@ export function parse(filename: string, params: ParseParameters): ParseResult {
     let transitionMatrix: number[][] = [];
     let demands = undefined;
     let depots = undefined;
+    let nbVehicles = undefined;
 
     let checkDirectionSymmetry = params.checkDirectionSymmetry ?? false;
     let checkTriangularInequality = params.checkTriangularInequality ?? false;
@@ -266,31 +273,97 @@ export function parse(filename: string, params: ParseParameters): ParseResult {
 
     let hasDirectionSymmetry = true;
     outer:
-        for (let i = 0; i < nbNodes; i++) {
-            for (let j = 0; j < nbNodes; j++) {
-                if (transitionMatrix[i][j] != transitionMatrix[j][i]) {
-                    if (checkDirectionSymmetry) {
-                        console.warn(`${filename}: Direction symmetry violated: ${i} -> ${j}: ${transitionMatrix[i][j]}, ${j} -> ${i}: ${transitionMatrix[j][i]} (EDGE_WEIGHT_TYPE: ${edgeWeightType})`);
-                        hasDirectionSymmetry = false;
-                        break outer;
-                    }
+    for (let i = 0; i < nbNodes; i++) {
+        for (let j = 0; j < nbNodes; j++) {
+            if (transitionMatrix[i][j] != transitionMatrix[j][i]) {
+                if (checkDirectionSymmetry) {
+                    console.warn(`${filename}: Direction symmetry violated: ${i} -> ${j}: ${transitionMatrix[i][j]}, ${j} -> ${i}: ${transitionMatrix[j][i]} (EDGE_WEIGHT_TYPE: ${edgeWeightType})`);
+                    hasDirectionSymmetry = false;
+                    break outer;
                 }
             }
         }
+    }
 
     if (checkTriangularInequality) {
         outermost:
-            for (let i = 0; i < nbNodes; i++) {
-                for (let k = 0; k < nbNodes; k++) {
-                    let ttIK = transitionMatrix[i][k];
-                    for (let j = 0; j < nbNodes; j++)
-                        if (transitionMatrix[i][j] > ttIK + visitDuration + transitionMatrix[k][j]) {
-                            console.warn(`${filename}: Triangular inequality violated: ${i} -> ${k} -> ${j}: ${transitionMatrix[i][j]} > ${transitionMatrix[i][k]} + ${visitDuration} + ${transitionMatrix[k][j]} (EDGE_WEIGHT_TYPE: ${edgeWeightType})`);
-                            break outermost;
-                        }
-                }
+        for (let i = 0; i < nbNodes; i++) {
+            for (let k = 0; k < nbNodes; k++) {
+                let ttIK = transitionMatrix[i][k];
+                for (let j = 0; j < nbNodes; j++)
+                    if (transitionMatrix[i][j] > ttIK + visitDuration + transitionMatrix[k][j]) {
+                        console.warn(`${filename}: Triangular inequality violated: ${i} -> ${k} -> ${j}: ${transitionMatrix[i][j]} > ${transitionMatrix[i][k]} + ${visitDuration} + ${transitionMatrix[k][j]} (EDGE_WEIGHT_TYPE: ${edgeWeightType})`);
+                        break outermost;
+                    }
             }
+        }
     }
 
-    return { type, nbNodes, transitionMatrix, demands, capacity, depots, hasDirectionSymmetry };
+    if (type == "CVRP") {
+        let match = filename.match(/k(\d+)\.vrp(\.gz)?$/);
+        if (match !== null)
+            nbVehicles = parseInt(match[1]);
+        else {
+            assert(capacity !== undefined)
+            assert(demands !== undefined)
+            let sum_demands = demands.reduce((partialSum, a) => partialSum + a, 0);
+            nbVehicles = Math.round((1.5 * sum_demands) / capacity);
+        }
+    }
+
+    return { type, nbNodes, transitionMatrix, demands, capacity, depots, hasDirectionSymmetry, nbVehicles };
+}
+
+export function parseSolomon(filename: string, params: ParseParameters): ParseResult {
+    let lines = utils.readFile(filename).trim().split('\n');
+    let pos = 0
+
+    let type = "VRP-TW";
+    let hasDirectionSymmetry = true;
+
+    let instance_name = lines[pos];
+    pos += 4;
+
+    let vehicle_data = lines[pos].trim().split(/\s+/).map(Number);
+    let nbVehicles = vehicle_data[0];
+    let capacity = vehicle_data[1];
+
+    pos += 5;
+
+    let transitionMatrix: number[][] = [];
+    let demands: number[] = [];
+    let ready_times: number[] = [];
+    let due_times: number[] = [];
+    let service_times: number[] = [];
+    let depots: number[] = [];
+
+    let nodes: { x: number, y: number }[] = [];
+    let nbNodes = 0;
+    for (; pos < lines.length; pos++) {
+        let nodeData = lines[pos].trim().split(/\s+/).map(Number);
+        assert(nodeData.length == 7);
+        assert(nodeData[0] == nbNodes);
+        nodes.push({ x: nodeData[1], y: nodeData[2] });
+        demands.push(nodeData[3]);
+        ready_times.push(nodeData[4]);
+        due_times.push(nodeData[5]);
+        service_times.push(nodeData[6]);
+        nbNodes++;
+    }
+
+    depots.push(0)
+
+    for (let i = 0; i < nbNodes; i++) {
+        let row = [];
+        for (let j = 0; j < nbNodes; j++) {
+            row[j] = Math.ceil(Math.sqrt(Math.pow(nodes[i].x - nodes[j].x, 2) + Math.pow(nodes[i].y - nodes[j].y, 2)));
+        }
+        transitionMatrix.push(row);
+    }
+
+    for (let i = 0; i < transitionMatrix.length; i++) {
+        transitionMatrix[i][i] = 0;
+    }
+
+    return { type, nbNodes, transitionMatrix, hasDirectionSymmetry, demands, capacity, depots, nbVehicles, ready_times, due_times, service_times }
 }

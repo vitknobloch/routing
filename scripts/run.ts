@@ -1,6 +1,6 @@
-import { defineModel } from "./modeller.js";
-import { parse } from "./parsetsp.js";
-import { parseSolution, serializeSolution } from "./solutionParserTSP.js";
+import { defineModelCVRP, defineModelTSP, defineModelVRPTW } from "./modeller.js";
+import { parseTspLib, parseSolomon } from "./parser.js";
+import { parseSolutionCVRP, parseSolutionTSP, serializeSolutionCVRP, serializeSolutionTSP } from "./solutionParser.js";
 import * as CP from '@scheduleopt/optalcp';
 import { spawn } from 'child_process';
 import { readConfig } from "./config_loader.js";
@@ -24,11 +24,11 @@ let seed = params.randomSeed == undefined ? 0 : params.randomSeed;
 
 let instance = undefined;
 if (problemType == "TSP") {
-    instance = parse(instanceFilename, {});
+    instance = parseTspLib(instanceFilename, {});
 } else if (problemType == "CVRP") {
-
+    instance = parseTspLib(instanceFilename, {});
 } else if (problemType == "VRP-TW") {
-
+    instance = parseSolomon(instanceFilename, {});
 }
 
 if (instance == undefined) {
@@ -45,23 +45,47 @@ heuristicsDebugPipe.on('line', async line => { console.log("strerr: " + line); }
 
 
 if (problemType == "TSP") {
-    let [model, vars] = defineModel(instance, instanceFilename, 1);
+    let [model, vars] = defineModelTSP(instance, instanceFilename, 1);
 
     heuristicsPipe.on('line', async line => {
-        let solution = parseSolution(line, vars, instance);
+        let solution = parseSolutionTSP(line, vars, instance);
         solver.sendSolution(solution);
     });
 
     solver.on('solution', async (msg: CP.SolutionEvent) => {
-        let solution_string = serializeSolution(msg.solution, vars, instance);
+        let solution_string = serializeSolutionTSP(msg.solution, vars, instance);
         heuristics.stdin.write(`${solution_string}\n`);
     });
 
     solver.solve(model, params);
 } else if (problemType == "CVRP") {
+    let [model, vars] = defineModelCVRP(instance, instanceFilename, 1);
 
+    heuristicsPipe.on('line', async line => {
+        let solution = parseSolutionCVRP(line, vars, instance);
+        solver.sendSolution(solution);
+    });
+
+    solver.on('solution', async (msg: CP.SolutionEvent) => {
+        let solution_string = serializeSolutionCVRP(msg.solution, vars, instance);
+        heuristics.stdin.write(`${solution_string}\n`);
+    });
+
+    solver.solve(model, params);
 } else if (problemType == "VRP-TW") {
+    let [model, vars] = defineModelVRPTW(instance, instanceFilename);
 
+    heuristicsPipe.on('line', async line => {
+        let solution = parseSolutionCVRP(line, vars, instance);
+        solver.sendSolution(solution);
+    });
+
+    solver.on('solution', async (msg: CP.SolutionEvent) => {
+        let solution_string = serializeSolutionCVRP(msg.solution, vars, instance);
+        heuristics.stdin.write(`${solution_string}\n`);
+    });
+
+    solver.solve(model, params);
 }
 
 

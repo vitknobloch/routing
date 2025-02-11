@@ -1,5 +1,5 @@
 {
-  "problem": "TSP",
+  "problem": "CVRP",
   "heuristics": {},
   "optal": {
     "LNS": 2,
