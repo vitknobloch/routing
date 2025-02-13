@@ -24,6 +24,7 @@ set(COMMON
     src/common/routing_instance.cpp
     src/common/tsplib_loader.cpp
     src/common/solomon_loader.cpp
+    src/common/logger.cpp
 )
 
 set(TSP

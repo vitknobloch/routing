@@ -5,10 +5,9 @@
 #include "CVRP/setup.h"
 #include "TSP/setup.h"
 #include "VRP-TW/setup.h"
-#include "common/optal_comms.h"
 #include "common/portfolio.h"
-#include "common/serializer.h"
 #include "json.hpp"
+#include "common/logger.h"
 #include <fstream>
 #include <iostream>
 
@@ -78,6 +77,8 @@ int main(int argc, char* argv[]){
     std::cerr << "Problem opening instance " << instance_filename << std::endl;
   }
 
+  auto logger = std::make_shared<ObjectiveValueLogger>(log_filename);
+  portfolio->setLogger(logger);
   portfolio->start();
 
   return 0;

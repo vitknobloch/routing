@@ -37,7 +37,7 @@ if (instance == undefined) {
 }
 
 
-let heuristics = spawn('./build/Heuristic', [configFilename, instanceFilename, `${seed}`], { windowsHide: true });
+let heuristics = spawn('./build/Heuristic', [configFilename, instanceFilename, logFilename, `${seed}`], { windowsHide: true });
 process.on('exit', () => { heuristics.kill(); });
 let heuristicsPipe = readline.createInterface({ input: heuristics.stdout, terminal: false, crlfDelay: Infinity });
 let heuristicsDebugPipe = readline.createInterface({ input: heuristics.stderr, terminal: false, crlfDelay: Infinity });

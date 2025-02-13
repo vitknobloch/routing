@@ -7,7 +7,8 @@
 #include <thread>
 
 HeuristicPortfolio::HeuristicPortfolio() :
-  improving_heuristics_(), constructive_heuristics_(), best_solution_(nullptr) {
+  improving_heuristics_(), constructive_heuristics_(),
+  logger_(nullptr), best_solution_(nullptr) {
 
 }
 void HeuristicPortfolio::addImprovingHeuristic(
@@ -21,6 +22,10 @@ void HeuristicPortfolio::addConstructiveHeuristic(
 }
 
 void HeuristicPortfolio::start() {
+  if(logger_ != nullptr){
+    logger_->startClock();
+  }
+
   std::vector<std::thread> threads;
   threads.reserve(constructive_heuristics_.size() + improving_heuristics_.size());
   // start constructive heuristics
@@ -39,7 +44,7 @@ void HeuristicPortfolio::start() {
   }
 }
 
-void HeuristicPortfolio::startThread(std::shared_ptr<Heuristic> heuristic) {
+void HeuristicPortfolio::startThread(const std::shared_ptr<Heuristic>& heuristic) {
   heuristic->initialize(this);
   heuristic->run();
 }
@@ -54,17 +59,24 @@ void HeuristicPortfolio::terminate() {
   }
 }
 
-void HeuristicPortfolio::acceptSolution(std::shared_ptr<Solution> solution) {
+void HeuristicPortfolio::acceptSolution(const std::shared_ptr<Solution>& solution) {
   std::lock_guard<std::mutex> lock(solution_lock_);
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;
+    sendSolution();
+
+    if(logger_ != nullptr)
+      logger_->log(*solution);
   }
-  std::cerr << best_solution_->objective << std::endl;
-  sendSolution();
 }
 
 void HeuristicPortfolio::sendSolution() {
   for(auto& heur: improving_heuristics_){
     heur->acceptSolution(best_solution_);
   }
+}
+
+void HeuristicPortfolio::setLogger(
+    const std::shared_ptr<ObjectiveValueLogger> &logger) {
+  logger_ = logger;
 }
