@@ -1,9 +1,9 @@
 {
-  "problem": "CVRP",
+  "problem": "TSP",
   "heuristics": {},
   "optal": {
     "LNS": 2,
-    "FDS": 0,
+    "FDS": 1,
     "neighborhoodStrategy": 2
   }
 }

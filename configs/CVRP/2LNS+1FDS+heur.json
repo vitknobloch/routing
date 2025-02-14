@@ -1,0 +1,11 @@
+{
+  "problem": "CVRP",
+  "heuristics": {
+    "local-search": {}
+  },
+  "optal": {
+    "LNS": 1,
+    "FDS": 1,
+    "neighborhoodStrategy": 2
+  }
+}

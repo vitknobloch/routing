@@ -1,0 +1,9 @@
+{
+    "problem": "TSP",
+    "heuristics": {},
+    "optal": {
+        "LNS": X,
+        "FDS": 2,
+        "neighborhoodStrategy": 2
+    }
+}

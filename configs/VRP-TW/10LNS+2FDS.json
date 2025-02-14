@@ -1,0 +1,9 @@
+{
+    "problem": "VRP-TW",
+    "heuristics": {},
+    "optal": {
+        "LNS": 10,
+        "FDS": 2,
+        "neighborhoodStrategy": 2
+    }
+}

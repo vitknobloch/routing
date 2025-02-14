@@ -1,0 +1,9 @@
+{
+    "problem": "CVRP",
+    "heuristics": {},
+    "optal": {
+        "LNS": 1,
+        "FDS": 0,
+        "neighborhoodStrategy": 2
+    }
+}
