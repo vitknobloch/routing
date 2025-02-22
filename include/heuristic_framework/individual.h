@@ -1,0 +1,21 @@
+//
+// Created by knoblvit on 20.2.25.
+//
+
+#pragma once
+#include <vector>
+#include <memory>
+
+class Individual{
+public:
+  virtual bool isEvaluated() = 0;
+  virtual void evaluate() = 0;
+  virtual void calculateFitness() = 0;
+  virtual void calculateConstraints() = 0;
+  virtual void initialize() = 0;
+  virtual double getFitness() = 0;
+  virtual double getTotalConstraintViolation() = 0;
+  virtual const std::vector<double> getConstraintViolations() = 0;
+  virtual bool betterThan(const std::shared_ptr<Individual> &other);
+
+};

@@ -27,6 +27,10 @@ set(COMMON
     src/common/logger.cpp
 )
 
+set(HEURISTIC_FRAMEWORK
+    src/heuristic_framework/callbacks.cpp
+)
+
 set(TSP
     src/TSP/setup.cpp
 )
@@ -42,6 +46,7 @@ set(VRP-TW
 add_executable(Heuristic
         src/main.cpp
         ${COMMON}
+        ${HEURISTIC_FRAMEWORK}
         ${TSP}
         ${CVRP}
         ${VRP-TW}
