@@ -29,10 +29,12 @@ set(COMMON
 
 set(HEURISTIC_FRAMEWORK
     src/heuristic_framework/callbacks.cpp
+        src/heuristic_framework/local_search.cpp
 )
 
 set(TSP
     src/TSP/setup.cpp
+        src/TSP/tsp_individual.cpp
 )
 
 set(CVRP

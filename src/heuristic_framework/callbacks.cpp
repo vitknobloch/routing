@@ -7,7 +7,7 @@
 #include <iostream>
 #include <utility>
 
-void Callbacks::newBestSolution(std::shared_ptr<Individual> &solution) {
+void Callbacks::newBestSolution(const std::shared_ptr<Individual> &solution) {
   for(const auto& callback : new_best_solution_callbacks_){
     callback(solution);
   }
@@ -18,7 +18,7 @@ bool Callbacks::shouldTerminate() {
 }
 
 void Callbacks::addNewBestSolutionCallback(
-    const std::function<void(std::shared_ptr<Individual> &)>& function) {
+    const std::function<void(const std::shared_ptr<Individual> &)>& function) {
   new_best_solution_callbacks_.push_back(function);
 }
 

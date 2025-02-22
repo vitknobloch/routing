@@ -15,11 +15,15 @@ private:
   std::shared_ptr<Mutation> mutation_;
   std::shared_ptr<Callbacks> callbacks_;
   std::shared_ptr<Individual> best_individual_;
+  std::shared_ptr<Individual> outside_solution_;
+  std::mutex outside_solution_mutex_;
 
+  bool checkBetterSolution(const std::shared_ptr<Individual> &individual);
+  bool checkOutsideSolution();
 
 public:
   LocalSearch(const std::shared_ptr<Callbacks> &callbacks, const std::shared_ptr<Mutation> &mutation);
-  void setSolutionIfBetter(const std::shared_ptr<Individual> &individual);
+  void acceptOutsideSolution(const std::shared_ptr<Individual> &individual);
   void run(const std::shared_ptr<Individual> &initialSolution);
 
 

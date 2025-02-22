@@ -10,8 +10,8 @@
 std::shared_ptr<HeuristicPortfolio>
 SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto portfolio = std::make_shared<HeuristicPortfolio>();
-  RoutingInstance instance;
-  instance.loadTSPlibInstance(instance_filename);
+  auto instance = std::make_shared<RoutingInstance>();
+  instance->loadTSPlibInstance(instance_filename);
 
   //Optal communication thread (it has heuristic interface / optal is basically one of the heuristics)
   auto serializer = std::make_shared<SolutionSerializer>();
