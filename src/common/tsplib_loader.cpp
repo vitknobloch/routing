@@ -188,7 +188,7 @@ void RoutingInstance::TSPlibLoader::loadNodes_GEO(RoutingInstance &instance,
       double q1 = cos(lat_long_i.second - lat_long_j.second);
       double q2 = cos(lat_long_i.first - lat_long_j.first);
       double q3 = cos(lat_long_i.first + lat_long_j.first);
-      auto dist = (unsigned int)round(6378.388 * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
+      auto dist = (unsigned int)floor(6378.388 * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0);
       instance.matrix_[i * instance.node_count_ + j] = dist;
     }
   }

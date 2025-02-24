@@ -1,3 +1,4 @@
+import { assert } from "node:console";
 import { TspVars, CvrpVars } from "./modeller.js";
 import { ParseResult } from "./parser.js";
 import * as CP from '@scheduleopt/optalcp';
@@ -6,9 +7,13 @@ export function parseSolutionTSP(solution_string: string, vars: TspVars, instanc
     let solution = new CP.Solution;
     let solution_json = JSON.parse(solution_string)
     solution.setObjective(solution_json.objective);
-    for (let node of solution_json.routes[0].nodes.slice(1)) {
-        solution.setValue(vars.visits[node.idx], node.start, node.end);
+    let prev_node = 0;
+    for (let node of solution_json.routes[0].route_nodes.slice(1)) {
+        //console.log(`${node.idx} ${node.start_time} ${node.end_time} ${instance.transitionMatrix[prev_node][node.idx]}`);
+        solution.setValue(vars.visits[node.idx], node.start_time, node.end_time);
+        prev_node = node.idx;
     }
+
     return solution;
 }
 

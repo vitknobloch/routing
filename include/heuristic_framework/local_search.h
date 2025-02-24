@@ -16,7 +16,7 @@ private:
   std::shared_ptr<Callbacks> callbacks_;
   std::shared_ptr<Individual> best_individual_;
   std::shared_ptr<Individual> outside_solution_;
-  std::mutex outside_solution_mutex_;
+  std::recursive_mutex outside_solution_mutex_;
 
   bool checkBetterSolution(const std::shared_ptr<Individual> &individual);
   bool checkOutsideSolution();

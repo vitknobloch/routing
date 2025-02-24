@@ -51,7 +51,7 @@ void OptalComms::acceptSolution(std::shared_ptr<Solution> solution) {
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;
     const std::string solution_string = serializer_->serializeSolution(solution);
-    std::cout << solution << std::endl;
+    std::cout << solution_string << std::endl;
   }
 }
 

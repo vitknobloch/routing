@@ -35,6 +35,8 @@ set(HEURISTIC_FRAMEWORK
 set(TSP
     src/TSP/setup.cpp
         src/TSP/tsp_individual.cpp
+        src/TSP/tsp_local_search.cpp
+        src/TSP/tsp_mutation_2opt.cpp
 )
 
 set(CVRP

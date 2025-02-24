@@ -311,6 +311,10 @@ export function parseTspLib(filename: string, params: ParseParameters): ParseRes
         }
     }
 
+    for (let i = 0; i < transitionMatrix.length; i++) {
+        transitionMatrix[i][i] = 0;
+    }
+
     return { type, nbNodes, transitionMatrix, demands, capacity, depots, hasDirectionSymmetry, nbVehicles };
 }
 

@@ -2,6 +2,7 @@
 // Created by knoblvit on 22.2.25.
 //
 #include "TSP/tsp_individual.h"
+#include <iostream>
 #include <limits>
 
 TspIndividual::TspIndividual(const RoutingInstance *const instance) : instance_(instance), matrix_(instance->getMatrix().get()), data_(), is_evaluated_(false), fitness_(std::numeric_limits<double>::max()) {
@@ -15,7 +16,7 @@ TspIndividual::TspIndividual(const TspIndividual &other) : instance_(other.insta
 void TspIndividual::initialize() {
   data_.reserve(instance_->getNodesCount());
   for(int i = 0; i < instance_->getNodesCount(); i++){
-    data_[i] = i;
+    data_.push_back(i);
   }
 }
 
@@ -27,7 +28,10 @@ void TspIndividual::resetEvaluated() {
   is_evaluated_ = false;
 }
 
-void TspIndividual::setFitness(double fitness) { fitness_ = fitness;}
+void TspIndividual::setFitness(double fitness) {
+  fitness_ = fitness;
+  is_evaluated_ = true;
+}
 
 bool TspIndividual::betterThan(const std::shared_ptr<Individual> &other) {
   return this->fitness_ < ((TspIndividual*)other.get())->fitness_;
@@ -44,6 +48,7 @@ void TspIndividual::evaluate() {
 void TspIndividual::calculateFitness() {
   fitness_ = 0;
   const auto matrix_size = instance_->getNodesCount();
+
   for(uint i = 0 ; i < data_.size() - 1; i++){
     fitness_ += matrix_[data_[i] * matrix_size + data_[i+1]];
   }
