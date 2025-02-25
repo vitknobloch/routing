@@ -53,4 +53,8 @@ void RoutingInstance::loadSolomonInstance(const char *filename) {
   SolomonLoader::loadNodes(*this, file);
 }
 
-
+uint RoutingInstance::getDistance(uint from, uint to) const {
+  from = from >= (uint)node_count_ ? 0 : from;
+  to = to >= (uint)node_count_ ? 0: to;
+  return matrix_[from * node_count_ + to];
+}

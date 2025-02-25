@@ -1,0 +1,25 @@
+//
+// Created by knoblvit on 24.2.25.
+//
+
+#pragma once
+#include "common/routing_instance.h"
+#include "cvrp_individual.h"
+#include "heuristic_framework/mutation.h"
+#include <random>
+
+class CvrpMutationRandom : public Mutation {
+private:
+  std::random_device rand;
+  std::mt19937 gen;
+  std::shared_ptr<RoutingInstance> instance_;
+
+  void getRouteStartAndLength(const std::vector<uint> &data, uint search_from, uint &start, uint &length);
+  void mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &individual, uint start, uint length);
+  int wrapWithinSpan(int begin, int length, int initial, int shift);
+
+public:
+  CvrpMutationRandom(const std::shared_ptr<RoutingInstance> &instance);
+  bool isInPlace() override;
+  bool mutate(const std::shared_ptr<Individual> &individual) override;
+};

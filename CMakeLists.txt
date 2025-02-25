@@ -41,6 +41,9 @@ set(TSP
 
 set(CVRP
     src/CVRP/setup.cpp
+        src/CVRP/cvrp_individual.cpp
+        src/CVRP/cvrp_local_search.cpp
+        src/CVRP/cvrp_mutation_random.cpp
 )
 
 set(VRP-TW

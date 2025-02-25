@@ -47,6 +47,8 @@ void OptalComms::run() {
 }
 
 void OptalComms::acceptSolution(std::shared_ptr<Solution> solution) {
+  if(!solution->feasible)
+    return;
   std::lock_guard<std::mutex> lock(solution_lock_);
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;

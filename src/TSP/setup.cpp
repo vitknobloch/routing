@@ -3,10 +3,10 @@
 //
 #include "TSP/setup.h"
 
-#include "common/routing_instance.h"
-#include "common/optal_comms.h"
 #include "TSP/tsp_local_search.h"
 #include "TSP/tsp_mutation_2opt.h"
+#include "common/optal_comms.h"
+#include "common/routing_instance.h"
 
 std::shared_ptr<HeuristicPortfolio>
 SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {

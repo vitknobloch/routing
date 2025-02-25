@@ -87,4 +87,6 @@ public:
   [[nodiscard]] inline const std::string &getInstanceName() const {return instance_name_;}
   [[nodiscard]] inline const int &getVehicleCapacity() const {return vehicle_capacity_;}
   [[nodiscard]] inline const int &getVehicleCount() const{ return vehicle_count_;}
+  [[nodiscard]] uint getDistance(uint from, uint to) const;
+
 };

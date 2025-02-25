@@ -9,6 +9,13 @@ struct SolutionNode{
   int idx = -1;
   int start_time = -1;
   int end_time = -1;
+
+  SolutionNode() = default;
+  SolutionNode(int idx, int start_time, int end_time){
+    this->idx = idx;
+    this->start_time = start_time;
+    this->end_time = end_time;
+  }
 };
 
 struct SolutionRoute{
@@ -24,4 +31,5 @@ struct Solution {
   int travel_time_sum = -1;
   int end_time_sum = -1;
   int objective = -1;
+  bool feasible = true;
 };

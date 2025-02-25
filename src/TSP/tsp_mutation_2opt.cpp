@@ -9,6 +9,7 @@
 bool TspMutation2opt::isInPlace() {
   return true;
 }
+
 bool TspMutation2opt::mutate(const std::shared_ptr<Individual> &individual) {
   auto individual_ = std::static_pointer_cast<TspIndividual>(individual);
   auto &data = individual_->data();
@@ -17,7 +18,7 @@ bool TspMutation2opt::mutate(const std::shared_ptr<Individual> &individual) {
   const uint start = dist(gen);
   uint length = dist(gen);
   if(length == data.size() - 1)
-    return false;
+    return true;
   const uint end = (start + length) % data.size();
   const uint start_node = data[start];
   const uint end_node = data[end];
@@ -28,7 +29,7 @@ bool TspMutation2opt::mutate(const std::shared_ptr<Individual> &individual) {
   const uint prev_cost = matrix_[prev_node * matrix_size + start_node] + matrix_[end_node * matrix_size + next_node];
   const uint new_cost = matrix_[prev_node * matrix_size + end_node] + matrix_[start_node * matrix_size + next_node];
   if(new_cost >= prev_cost){
-    return false;
+    return true;
   }
 
   for(uint i = 0; i <= length / 2; i++){
