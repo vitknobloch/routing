@@ -2,6 +2,7 @@
 // Created by knoblvit on 9.2.25.
 //
 #include "CVRP//setup.h"
+#include <iostream>
 
 #include "CVRP/cvrp_local_search.h"
 #include "CVRP/cvrp_mutation_random.h"
@@ -19,9 +20,16 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto optalComms = std::make_shared<OptalComms>(serializer);
   portfolio->addImprovingHeuristic(optalComms);
 
-  auto mutation = std::make_shared<CvrpMutationRandom>(instance);
-  auto localSearch = std::make_shared<CvrpLocalSearch>(instance, mutation);
-  portfolio->addImprovingHeuristic(localSearch);
+  for(int h = 0; h < config.size(); h++){
+    auto heur_config = config[h];
+    if(!heur_config.contains("type"))
+      std::cerr << "Heuristic config doesn't contain type." << std::endl;
+    if(heur_config["type"] == "local_search"){
+      auto mutation = std::make_shared<CvrpMutationRandom>(instance);
+      auto localSearch = std::make_shared<CvrpLocalSearch>(instance, mutation);
+      portfolio->addImprovingHeuristic(localSearch);
+    }
+  }
 
   return portfolio;
 }

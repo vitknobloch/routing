@@ -1,8 +1,11 @@
 {
   "problem": "CVRP",
-  "heuristics": {
-    "local-search": {}
-  },
+  "heuristics": [
+    {
+      "type": "local_search",
+      "mutation": "random"
+    }
+  ],
   "optal": {
     "LNS": 1,
     "FDS": 1,

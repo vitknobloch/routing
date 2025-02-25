@@ -1,8 +1,8 @@
 {
   "problem": "VRP-TW",
-  "heuristics": {
-    "local-search": {}
-  },
+  "heuristics": [
+
+  ],
   "optal": {
     "LNS": 1,
     "FDS": 1,

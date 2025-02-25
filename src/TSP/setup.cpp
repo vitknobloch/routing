@@ -2,6 +2,7 @@
 // Created by knoblvit on 9.2.25.
 //
 #include "TSP/setup.h"
+#include <iostream>
 
 #include "TSP/tsp_local_search.h"
 #include "TSP/tsp_mutation_2opt.h"
@@ -19,9 +20,15 @@ SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto optalComms = std::make_shared<OptalComms>(serializer);
   portfolio->addImprovingHeuristic(optalComms);
 
-  auto mutation = std::make_shared<TspMutation2opt>(instance->getMatrix().get());
-  auto localSearch = std::make_shared<TspLocalSearch>(instance, mutation);
-  portfolio->addImprovingHeuristic(localSearch);
-
+  for(int h = 0; h < config.size(); h++){
+    auto heur_config = config[h];
+    if(!heur_config.contains("type"))
+        std::cerr << "Heuristic config doesn't contain type." << std::endl;
+    if(heur_config["type"] == "local_search"){
+      auto mutation = std::make_shared<TspMutation2opt>(instance->getMatrix().get());
+      auto localSearch = std::make_shared<TspLocalSearch>(instance, mutation);
+      portfolio->addImprovingHeuristic(localSearch);
+    }
+  }
   return portfolio;
 }

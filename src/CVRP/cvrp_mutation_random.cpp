@@ -27,17 +27,14 @@ bool CvrpMutationRandom::mutate(const std::shared_ptr<Individual> &individual) {
 bool CvrpMutationRandom::isInPlace() { return false; }
 void CvrpMutationRandom::getRouteStartAndLength(const std::vector<uint> &data, uint search_from,
                                                 uint *start, uint *length) {
-  uint iters = 0;
   uint i = search_from;
   while(data[i] > 0 && data[i] < (uint)instance_->getNodesCount()){
     i = (i + 1) % data.size();
-    assert(iters++ < 2 * data.size());
   }
   *start = i;
   i = (i+1) % data.size();
   while(data[i] > 0 && data[i] < (uint)instance_->getNodesCount()){
     i = (i + 1) % data.size();
-    assert(iters++ < 2 * data.size());
   }
   *length = (i + data.size() - *start) % data.size();
 }
@@ -68,23 +65,6 @@ void CvrpMutationRandom::mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &
     return;
   }
 
-  //DEBUG START
-  /*
-  individual->resetEvaluated();
-  individual->evaluate();
-  std::cout << "Individual data: ";
-  for(const auto &n : data)
-    std::cout << n << " ";
-  std::cout << std::endl;
-  std::cout << "Route: " << start_route << ", " << length_route << ": ";
-  for(uint i = 0; i < length_route; i++)
-    std::cout << data[(start_route + i) % data.size()] << " ";
-  std::cout << std::endl;
-  std::cout << "Move idxs: " << start_move << " " << length_move << " " << end_move << std::endl;
-  std::cout << "Move: " << prev_node << " " << start_node << " " << end_node << " " << next_node << " " << length_move << std::endl;
-  */
-  //DEBUG END
-
   for(int i = 0; i < ((int)length_move + 1) / 2; i++){
     uint left_swap = wrapWithinSpan((int)start_route, (int)length_route, (int)start_move, i);
     uint right_swap = wrapWithinSpan((int)start_route, (int)length_route, (int)end_move, -i);
@@ -110,34 +90,12 @@ void CvrpMutationRandom::mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &
     route.push_back(data[wrapWithinSpan(start_route, length_route, start_route, zero_shift + i)]);
   }
 
-  //DEBUG START
-  /*
-  for(const auto &n : route){
-    std::cout << n << " ";
-  }
-  std::cout << std::endl;
-  */
-  //DEBUG END
-
   for(uint i = 0; i < length_route; i++){
     data[(start_route + i) % data.size()] = route[i];
   }
 
   double new_fitness = individual->getFitness() - (double)prev_cost + (double)new_cost;
-  //std::cout << individual->getFitness() << " " << prev_cost << " " << new_cost << std::endl;
   individual->setFitness(new_fitness);
-  individual->resetEvaluated();
-  individual->evaluate();
-  /*
-  if(new_fitness != individual->getFitness() || !individual->assertData()){
-    std::cout << "Assertion fail: " << new_fitness << " " << individual->getFitness() << std::endl;
-
-    std::cout << "Assertion fail: ";
-    for(const auto &n : data)
-      std::cout << n << " ";
-    std::cout << std::endl;
-  }
-  */
 }
 
 int CvrpMutationRandom::wrapWithinSpan(int begin, int length, int initial,
