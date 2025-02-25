@@ -67,7 +67,7 @@ export function defineModelCVRP(instance: ParseResult, filename: string, visit_d
     for (let v = 0; v < instance.nbVehicles; v++) {
         // Visits done by the vehicle v:
         let myVisits = Array.from({ length: nbCustomers }, (_, i) =>
-            model.intervalVar({ length: visit_duration, name: `V_${v + 1}_${i + 2}`, optional: true })
+            model.intervalVar({ length: visit_duration, name: `V_${v + 1}_${i + 1}`, optional: true })
         );
         // Add myVisits to the visits array:
         for (let i = 0; i < nbCustomers; i++)

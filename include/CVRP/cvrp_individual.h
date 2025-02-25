@@ -24,6 +24,7 @@ public:
   void initialize() override;
   std::vector<uint> &data();
   void resetEvaluated();
+  bool assertData();
   void setFitness(double fitness);
   bool betterThan(const std::shared_ptr<Individual> &other) override;
   void calculateFitness() override;

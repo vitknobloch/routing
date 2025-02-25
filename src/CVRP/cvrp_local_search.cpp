@@ -104,7 +104,7 @@ std::shared_ptr<Solution> CvrpLocalSearch::convertSolution(
 
   solution->end_time_sum += time;
   solution->travel_time_sum += travel_time;
-  solution->objective = travel_time;
+  solution->objective = solution->travel_time_sum;
 
   if(individual->getTotalConstraintViolation() > 0)
     solution->feasible = false;
@@ -187,6 +187,7 @@ void CvrpLocalSearch::run(){
   auto initialSolution = std::make_shared<CvrpIndividual>(instance_.get());
   initialSolution->initialize();
   std::shuffle(initialSolution->data().begin(), initialSolution->data().end(), gen);
+  initialSolution->resetEvaluated();
   initialSolution->evaluate();
   auto solution = convertSolution(initialSolution);
   portfolio_->acceptSolution(solution);

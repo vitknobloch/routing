@@ -30,7 +30,7 @@ void LocalSearch::run(const std::shared_ptr<Individual> &initialSolution) {
     else{
       std::shared_ptr<Individual> new_solution = solution->deepcopy();
       mutation_->mutate(new_solution);
-      solution->evaluate();
+      new_solution->evaluate();
       if(checkBetterSolution(new_solution)){
         solution = new_solution;
       }

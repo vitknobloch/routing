@@ -60,13 +60,15 @@ export function parseSolutionCVRP(solution_string: string, vars: CvrpVars, insta
     let solution = new CP.Solution;
     let solution_json = JSON.parse(solution_string);
     solution.setObjective(solution_json.objective);
-    solution_json.routes.forEach((route: any, i: number) => {
-        for (const node of route.nodes.slice(1, -1)) {
-            solution.setValue(vars.visits[node.idx - 1][i], node.start, node.end);
+    for (let i = 0; i < instance.nbVehicles!; i++) {
+        const route = solution_json.routes[i];
+        for (const node of route.route_nodes.slice(1, -1)) {
+            solution.setValue(vars.visits[node.idx - 1][i], node.start_time, node.end_time);
         }
-        const node = route.nodes.at(-1);
-        solution.setValue(vars.lasts[i], node.start, node.end);
-    });
+        const node = route.route_nodes.at(-1);
+        solution.setValue(vars.lasts[i], node.start_time, node.end_time);
+    }
+
     return solution;
 }
 

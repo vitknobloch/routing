@@ -62,18 +62,21 @@ bool CvrpIndividual::isEvaluated() {
 }
 
 void CvrpIndividual::calculateConstraints() {
+  const auto &nodes = instance_->getNodes();
   uint first_vehicle_start = data_.size();
   uint i = 0;
   uint demand_running_sum = 0;
   uint demand_violation = 0;
-  while(i != first_vehicle_start && i < data_.size()){
-    if(data_[i] == 0 || data_[i] >= (uint)instance_->getNodesCount()){
+  while(i != first_vehicle_start){
+    const uint node = data_[i] >= (uint)instance_->getNodesCount() ? 0 : data_[i];
+    if(node == 0){
       if(first_vehicle_start == data_.size()){
         first_vehicle_start = i;
       }
-      demand_violation += std::max(demand_running_sum - instance_->getVehicleCapacity(), 0u);
+      demand_violation += std::max((int)demand_running_sum - instance_->getVehicleCapacity(), 0);
       demand_running_sum = 0;
     }
+    demand_running_sum += nodes[node].demand;
     i = (i + 1) % data_.size();
   }
   capacity_constraint_violation_ = demand_violation;
@@ -81,6 +84,7 @@ void CvrpIndividual::calculateConstraints() {
 const std::vector<double> &CvrpIndividual::getConstraintViolations() {
   return {capacity_constraint_violation_};
 }
+
 double CvrpIndividual::getTotalConstraintViolation() {
   return capacity_constraint_violation_;
 }
@@ -91,4 +95,15 @@ void CvrpIndividual::evaluate() {
     calculateConstraints();
   }
   is_evaluated_ = true;
+}
+
+bool CvrpIndividual::assertData() {
+  std::vector<bool> included(data_.size(), false);
+  for(const auto &n: data_){
+    included[n] = true;
+  }
+  for(const auto &i : included)
+    if(!included[i])
+      return false;
+  return true;
 }

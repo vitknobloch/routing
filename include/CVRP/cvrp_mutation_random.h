@@ -14,8 +14,8 @@ private:
   std::mt19937 gen;
   std::shared_ptr<RoutingInstance> instance_;
 
-  void getRouteStartAndLength(const std::vector<uint> &data, uint search_from, uint &start, uint &length);
-  void mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &individual, uint start, uint length);
+  void getRouteStartAndLength(const std::vector<uint> &data, uint search_from, uint *start, uint *length);
+  void mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &individual, uint start_route, uint length_route);
   int wrapWithinSpan(int begin, int length, int initial, int shift);
 
 public:
