@@ -35,7 +35,10 @@ COPY lib/ /workspace/lib/
 COPY include/ /workspace/include/
 COPY src/ /workspace/src/
 COPY CMakeLists.txt /workspace/
+COPY configs/ /workspace/configs/
 
+# Set working directory (optional)
+WORKDIR /workspace
 
 # Build the heuristics portfolio
 RUN rm -rf build && mkdir build && cd build && cmake .. && make && cd ..
@@ -43,8 +46,6 @@ RUN rm -rf build && mkdir build && cd build && cmake .. && make && cd ..
 # Set default shell to bash
 SHELL ["/bin/bash", "-c"]
 
-# Set working directory (optional)
-WORKDIR /workspace
 
 # Default entry point (optional) - update this to run your app or provide a shell
 CMD ["bash"]

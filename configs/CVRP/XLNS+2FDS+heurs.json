@@ -1,6 +1,6 @@
 {
     "problem": "CVRP",
-    "heuristics": {},
+    "heuristics": [],
     "optal": {
         "LNS": X,
         "FDS": 2,

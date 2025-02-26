@@ -1,6 +1,6 @@
 {
   "problem": "TSP",
-  "heuristics": {},
+  "heuristics": [],
   "optal": {
     "LNS": 2,
     "FDS": 1,
