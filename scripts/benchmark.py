@@ -4,7 +4,7 @@ import subprocess
 from time import sleep
 
 SEEDS = ["0", "1", "2"]
-EXEC_TIME = 2
+EXEC_TIME = 120
 EXTRA_TIME = 2
 PAUSE_TIME = 2
 
