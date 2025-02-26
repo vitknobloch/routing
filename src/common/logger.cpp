@@ -34,6 +34,9 @@ double ObjectiveValueLogger::getSecondsElapsed() {
 }
 
 void ObjectiveValueLogger::log(const Solution &solution) {
+  if(!solution.feasible){
+    return;
+  }
   if(file_ && file_.is_open()){
     file_ << getSecondsElapsed() << " " << solution.objective << std::endl;
   }else{

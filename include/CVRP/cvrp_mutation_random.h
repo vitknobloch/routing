@@ -17,6 +17,15 @@ private:
   void getRouteStartAndLength(const std::vector<uint> &data, uint search_from, uint *start, uint *length);
   void mutate2optInsideRoute(std::shared_ptr<CvrpIndividual> &individual, uint start_route, uint length_route);
   int wrapWithinSpan(int begin, int length, int initial, int shift);
+  void mutateKick(std::shared_ptr<CvrpIndividual> &individual);
+  void mutateExchange(std::shared_ptr<CvrpIndividual> &individual);
+  uint selectIdxToKick(std::shared_ptr<CvrpIndividual> &individual);
+  uint selectIdxToKickDemandViolated(std::shared_ptr<CvrpIndividual> &individual, uint start_idx);
+  int selectIdxToExchange(std::shared_ptr<CvrpIndividual> &individual, uint kicked_idx);
+  int selectInsertIndex(std::shared_ptr<CvrpIndividual> &individual, uint kicked_idx);
+
+  inline bool isCustomer(const uint &node);
+  inline bool isDepot(const uint &node);
 
 public:
   CvrpMutationRandom(const std::shared_ptr<RoutingInstance> &instance);

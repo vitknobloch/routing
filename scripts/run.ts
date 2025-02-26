@@ -57,12 +57,14 @@ if (problemType == "TSP") {
         heuristics.stdin.write(`${solution_string}\n`);
     });
 
-    solver.solve(model, params);
+    if (params.nbWorkers != 0)
+        solver.solve(model, params);
 } else if (problemType == "CVRP") {
     let [model, vars] = defineModelCVRP(instance, instanceFilename, 1);
 
     heuristicsPipe.on('line', async line => {
         let solution = parseSolutionCVRP(line, vars, instance);
+        //console.log(line);
         solver.sendSolution(solution);
     });
 
@@ -71,7 +73,8 @@ if (problemType == "TSP") {
         heuristics.stdin.write(`${solution_string}\n`);
     });
 
-    solver.solve(model, params);
+    if (params.nbWorkers != 0)
+        solver.solve(model, params);
 } else if (problemType == "VRP-TW") {
     let [model, vars] = defineModelVRPTW(instance, instanceFilename);
 
@@ -85,7 +88,8 @@ if (problemType == "TSP") {
         heuristics.stdin.write(`${solution_string}\n`);
     });
 
-    solver.solve(model, params);
+    if (params.nbWorkers != 0)
+        solver.solve(model, params);
 }
 
 

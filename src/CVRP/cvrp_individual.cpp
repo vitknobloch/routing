@@ -13,8 +13,8 @@ instance_(other.instance_), matrix_(other.matrix_), data_(other.data_), is_evalu
   fitness_(other.fitness_), capacity_constraint_violation_(other.capacity_constraint_violation_){}
 
 void CvrpIndividual::initialize() {
-  data_.reserve(instance_->getNodesCount() + instance_->getVehicleCount());
-  for(int i = 0; i < instance_->getNodesCount() + instance_->getVehicleCount(); i++){
+  data_.reserve(instance_->getNodesCount() + instance_->getVehicleCount() - 1);
+  for(int i = 0; i < instance_->getNodesCount() + instance_->getVehicleCount() - 1; i++){
     data_.push_back(i);
   }
 }
@@ -72,6 +72,7 @@ void CvrpIndividual::calculateConstraints() {
     if(node == 0){
       if(first_vehicle_start == data_.size()){
         first_vehicle_start = i;
+        demand_running_sum = 0;
       }
       demand_violation += std::max((int)demand_running_sum - instance_->getVehicleCapacity(), 0);
       demand_running_sum = 0;
@@ -79,6 +80,7 @@ void CvrpIndividual::calculateConstraints() {
     demand_running_sum += nodes[node].demand;
     i = (i + 1) % data_.size();
   }
+  demand_violation += std::max((int)demand_running_sum - instance_->getVehicleCapacity(), 0);
   capacity_constraint_violation_ = demand_violation;
 }
 const std::vector<double> &CvrpIndividual::getConstraintViolations() {

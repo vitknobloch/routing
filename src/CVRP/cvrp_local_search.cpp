@@ -2,6 +2,8 @@
 // Created by knoblvit on 24.2.25.
 //
 #include "CVRP/cvrp_local_search.h"
+#include <cassert>
+#include <iostream>
 #include <random>
 
 CvrpLocalSearch::CvrpLocalSearch(
@@ -102,12 +104,13 @@ std::shared_ptr<Solution> CvrpLocalSearch::convertSolution(
   solution->routes.back().demand = demand;
   solution->routes.back().end_time = time;
 
+  assert(solution->routes.size() == instance_->getVehicleCount());
+
   solution->end_time_sum += time;
   solution->travel_time_sum += travel_time;
   solution->objective = solution->travel_time_sum;
 
-  if(individual->getTotalConstraintViolation() > 0)
-    solution->feasible = false;
+  solution->feasible = individual->getTotalConstraintViolation() == 0;
 
   return solution;
 }
@@ -155,6 +158,7 @@ void CvrpLocalSearch::initialize(HeuristicPortfolio *portfolio) {
   callbacks->addNewBestSolutionCallback([this](const std::shared_ptr<Individual> &individual) {
     auto individual_ = std::static_pointer_cast<CvrpIndividual>(individual);
     auto solution = convertSolution(individual_);
+    //std::cerr << solution->objective << " " << individual->getTotalConstraintViolation() << std::endl;
     sendSolution(solution);
   });
   local_search_ = std::make_shared<LocalSearch>(callbacks, mutation_);

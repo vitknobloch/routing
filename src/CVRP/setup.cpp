@@ -31,5 +31,7 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
     }
   }
 
+  std::cerr << "Heuristic vehicle count " << instance->getVehicleCount() << std::endl;
+
   return portfolio;
 }

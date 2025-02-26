@@ -59,6 +59,7 @@ export function serializeSolutionTSP(solution: CP.Solution, vars: TspVars, insta
 export function parseSolutionCVRP(solution_string: string, vars: CvrpVars, instance: ParseResult): CP.Solution {
     let solution = new CP.Solution;
     let solution_json = JSON.parse(solution_string);
+    assert(solution_json.routes.length == instance.nbVehicles, `Vehicles present: ${solution_json.routes.length}, expected ${instance.nbVehicles}`)
     solution.setObjective(solution_json.objective);
     for (let i = 0; i < instance.nbVehicles!; i++) {
         const route = solution_json.routes[i];
