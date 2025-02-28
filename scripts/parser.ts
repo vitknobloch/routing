@@ -4,7 +4,7 @@ import { readFile } from 'fs';
 
 // An auxiliary function for the GEO distance function.
 function toRadians(x: number) {
-    let degrees = Math.round(x);
+    let degrees = Math.trunc(x);
     let minutes = x - degrees;
     // Don't use Math.PI here to make sure we get the same result as other implementations.
     const pi = 3.141592;

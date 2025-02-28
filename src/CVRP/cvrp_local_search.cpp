@@ -177,6 +177,10 @@ void CvrpLocalSearch::acceptSolution(std::shared_ptr<Solution> solution) {
 
 bool CvrpLocalSearch::checkBetterSolution(
     const std::shared_ptr<Solution> &solution) {
+  if(solution->objective < 0) { // integer overflow
+    std::cerr << "Integer overflow encountered in CVRP local search solution value" << std::endl;
+    return false;
+  }
   std::lock_guard<std::recursive_mutex> lock(solution_mutex_);
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;

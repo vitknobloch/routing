@@ -23,6 +23,7 @@ public:
   explicit TspIndividual(const RoutingInstance* const instance);
   TspIndividual(const TspIndividual &other);
   void initialize() override;
+  void initializeNearestNeighbor();
   std::vector<uint> &data();
   void resetEvaluated();
   void setFitness(double fitness);

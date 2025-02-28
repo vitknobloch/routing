@@ -24,6 +24,9 @@ class Benchmark:
         print(f"Running experiment: {self.finished_runs + 1}/{self.total_runs} (ETA: {int(eta/60)} hrs {eta % 60} min)")
         print(f"{os.path.basename(instance)} seed: {seed}")
         sleep(EXEC_TIME + EXTRA_TIME)
+        status = proc.poll()
+        if(status is not None and status != 0):
+            print(f"Instance crashed!")
         proc.kill()
         self.finished_runs += 1
         sleep(PAUSE_TIME)

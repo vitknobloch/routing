@@ -92,5 +92,9 @@ if (problemType == "TSP") {
         solver.solve(model, params);
 }
 
+if (!heuristics.killed) { // End heuristics if the optimal solution was found
+    heuristics.kill();
+}
+
 
 

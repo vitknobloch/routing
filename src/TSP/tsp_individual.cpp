@@ -2,6 +2,8 @@
 // Created by knoblvit on 22.2.25.
 //
 #include "TSP/tsp_individual.h"
+#include <bitset>
+#include <cassert>
 #include <iostream>
 #include <limits>
 
@@ -14,10 +16,42 @@ TspIndividual::TspIndividual(const TspIndividual &other) : instance_(other.insta
 }
 
 void TspIndividual::initialize() {
+  data_.clear();
   data_.reserve(instance_->getNodesCount());
   for(int i = 0; i < instance_->getNodesCount(); i++){
     data_.push_back(i);
   }
+}
+
+void TspIndividual::initializeNearestNeighbor(){
+  data_.clear();
+  data_.reserve(instance_->getNodesCount());
+
+  const auto N = instance_->getNodesCount();
+  std::vector<bool> used(N, false);
+
+  uint start_node = rand() % N; // Should probably use structures from <random>
+  data_.push_back(start_node);
+  used[start_node] = true;
+  for(int i = 0; i < N-1; i++){
+    int nearest_neighbor = -1;
+    uint best_distance = std::numeric_limits<uint>::max();
+    const uint cur_node = data_.back();
+    for(int j = 0; j < N; j++){
+      if(used[j])
+        continue;
+      const uint distance = instance_->getDistance(cur_node, j);
+      if(distance < best_distance){
+        nearest_neighbor = j;
+        best_distance = distance;
+      }
+    }
+
+    used[nearest_neighbor] = true;
+    data_.push_back(nearest_neighbor);
+  }
+
+  assert(data_.size() == (uint)N);
 }
 
 std::vector<uint> &TspIndividual::data() {

@@ -11,12 +11,13 @@ inline std::string RoutingInstance::TSPlibLoader::strip(const std::string& line)
 
 inline std::pair<double, double>
 RoutingInstance::TSPlibLoader::latitudeLongitude(double x, double y) {
-  double degreesX = round(x);
+  constexpr double pi = 3.141592;
+  double degreesX = trunc(x);
   double minutesX = x - degreesX;
-  double latitude = M_PI * (degreesX + 5.0 * minutesX / 3.0) / 180.0;
-  double degreesY = round(y);
+  double latitude = pi * (degreesX + 5.0 * minutesX / 3.0) / 180.0;
+  double degreesY = trunc(y);
   double minutesY = y - degreesY;
-  double longitude = M_PI * (degreesY + 5.0 * minutesY / 3.0) / 180.0;
+  double longitude = pi * (degreesY + 5.0 * minutesY / 3.0) / 180.0;
   return {latitude, longitude};
 }
 

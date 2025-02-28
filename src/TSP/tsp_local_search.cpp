@@ -93,7 +93,8 @@ void TspLocalSearch::initialize(HeuristicPortfolio *portfolio) {
   callbacks->addNewBestSolutionCallback([this](const std::shared_ptr<Individual> &individual) {
     auto individual_ = std::static_pointer_cast<TspIndividual>(individual);
     auto solution = convertSolution(individual_);
-    sendSolution(solution);
+    if(checkBetterSolution(solution))
+      sendSolution(solution);
   });
   local_search_ = std::make_shared<LocalSearch>(callbacks, mutation_);
 }
@@ -111,6 +112,10 @@ void TspLocalSearch::acceptSolution(std::shared_ptr<Solution> solution) {
 
 bool TspLocalSearch::checkBetterSolution(
     const std::shared_ptr<Solution> &solution) {
+  if(solution->objective < 0) { // integer overflow
+    std::cerr << "Integer overflow encountered in TSP local search solution value" << std::endl;
+    return false;
+  }
   std::lock_guard<std::recursive_mutex> lock(solution_mutex_);
   if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
     best_solution_ = solution;
@@ -123,10 +128,11 @@ void TspLocalSearch::run(){
   std::random_device rand;
   std::mt19937 gen(rand());
   std::shared_ptr<TspIndividual> initialSolution = std::make_shared<TspIndividual>(instance_.get());
-  initialSolution->initialize();
-  std::shuffle(initialSolution->data().begin(), initialSolution->data().end(), gen);
+  initialSolution->initializeNearestNeighbor();
+  //std::shuffle(initialSolution->data().begin(), initialSolution->data().end(), gen);
   initialSolution->evaluate();
   auto solution = convertSolution(initialSolution);
-  portfolio_->acceptSolution(solution);
+  if(checkBetterSolution(solution))
+    portfolio_->acceptSolution(solution);
   local_search_->run(initialSolution);
 }
