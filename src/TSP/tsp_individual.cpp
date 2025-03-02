@@ -68,7 +68,7 @@ void TspIndividual::setFitness(double fitness) {
 }
 
 bool TspIndividual::betterThan(const std::shared_ptr<Individual> &other) {
-  return this->fitness_ < ((TspIndividual*)other.get())->fitness_;
+  return !other || this->fitness_ < ((TspIndividual*)other.get())->fitness_;
 }
 
 void TspIndividual::evaluate() {

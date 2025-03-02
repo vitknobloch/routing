@@ -4,22 +4,34 @@
 
 #pragma once
 
+#include "individual.h"
 #include <memory>
 #include <vector>
-#include "individual.h"
+
+using uint = unsigned int;
 
 class Population{
 protected:
   std::shared_ptr<Individual> best_individual_;
   std::vector<std::shared_ptr<Individual>> population_;
+  std::vector<uint> ranks_;
+  bool ranked_;
 
 public:
-  const std::shared_ptr<Individual> &getBestIndividual() const;
-  const std::vector<std::shared_ptr<Individual>> &getPopulation() const;
+  Population();
+  [[nodiscard]] const std::shared_ptr<Individual> &getBestIndividual() const;
+  [[nodiscard]] const std::vector<std::shared_ptr<Individual>> &getPopulation() const;
   const std::shared_ptr<Individual> &getIndividual(int idx);
-  size_t size() const;
+  [[nodiscard]] size_t size() const;
   void addIndividual(const std::shared_ptr<Individual> &individual);
-  void replaceIndividual(const std::shared_ptr<Individual> &individual);
-  void merge(const std::shared_ptr<Population> &other);
+  void replaceIndividual(int idx, const std::shared_ptr<Individual> &individual);
+  virtual void merge(const std::shared_ptr<Population> &other);
   void evaluate();
+  virtual bool isBetter(int idx, int idx_other);
+  virtual void rank();
+  bool isRanked();
+  const std::shared_ptr<Individual> &getIndividualByRank(int rank);
+
+  /** Returns empty population of the same type*/
+  virtual std::shared_ptr<Population> getEmpty();
 };

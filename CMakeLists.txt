@@ -30,6 +30,9 @@ set(COMMON
 set(HEURISTIC_FRAMEWORK
     src/heuristic_framework/callbacks.cpp
         src/heuristic_framework/local_search.cpp
+        src/heuristic_framework/population.cpp
+        src/heuristic_framework/tournament_selection.cpp
+        src/heuristic_framework/truncation_replacement.cpp
 )
 
 set(TSP

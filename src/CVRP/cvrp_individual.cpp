@@ -31,6 +31,8 @@ void CvrpIndividual::setFitness(double fitness) {
 }
 
 bool CvrpIndividual::betterThan(const std::shared_ptr<Individual> &other) {
+  if(!other)
+    return true;
   auto individual_ = std::static_pointer_cast<CvrpIndividual>(other);
   if(capacity_constraint_violation_ < other->getTotalConstraintViolation())
     return true;

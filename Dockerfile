@@ -25,9 +25,9 @@ COPY node_modules /workspace/node_modules/
 
 # Install Node.js dependencies and compile TypeScript
 RUN if [ -f package.json ]; then \
-        npm install && \
-        npm i --save-dev @types/node && \
-        npx tsc; \
+    npm install && \
+    npm i --save-dev @types/node && \
+    npx tsc; \
     fi
 
 # Copy the heuristics portfolio from the repository into the container
@@ -40,6 +40,10 @@ COPY configs/ /workspace/configs/
 # Set working directory (optional)
 WORKDIR /workspace
 
+# Build the typescript
+RUN if [ -f package.json ]; then \
+    npx tsc; \
+    fi
 # Build the heuristics portfolio
 RUN rm -rf build && mkdir build && cd build && cmake .. && make && cd ..
 
