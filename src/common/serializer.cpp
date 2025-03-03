@@ -12,7 +12,13 @@ SolutionSerializer::parseSolution(std::string solution_string) {
 
   JSON solution_json;
   std::istringstream stream(solution_string);
-  stream >> solution_json;
+  try{
+    stream >> solution_json;
+  }
+  catch (std::exception &ex){
+    return nullptr;
+  }
+
 
   solution->objective = solution_json.at("objective");
   solution->end_time_sum = solution_json.at("end_time_sum");

@@ -19,6 +19,7 @@ let [params_, problemType] = readConfig(configFilename, params);
 params = params_;
 
 let solver = new CP.Solver;
+solver.setMaxListeners(1000);
 
 let seed = params.randomSeed == undefined ? 0 : params.randomSeed;
 
@@ -36,13 +37,13 @@ if (instance == undefined) {
     exit(100);
 }
 
-
 let heuristics = spawn('./build/Heuristic', [configFilename, instanceFilename, logFilename, `${seed}`], { windowsHide: true });
 process.on('exit', () => { heuristics.kill(); });
 let heuristicsPipe = readline.createInterface({ input: heuristics.stdout, terminal: false, crlfDelay: Infinity });
 let heuristicsDebugPipe = readline.createInterface({ input: heuristics.stderr, terminal: false, crlfDelay: Infinity });
 heuristicsDebugPipe.on('line', async line => { console.log("strerr: " + line); });
 
+let optimalSolution: Promise<CP.SolveResult>;
 
 if (problemType == "TSP") {
     let [model, vars] = defineModelTSP(instance, instanceFilename, 1);
@@ -58,7 +59,7 @@ if (problemType == "TSP") {
     });
 
     if (params.nbWorkers != 0)
-        solver.solve(model, params);
+        solver.solve(model, params).then(_ => { if (!heuristics.killed) heuristics.kill(); });
 } else if (problemType == "CVRP") {
     let [model, vars] = defineModelCVRP(instance, instanceFilename, 1);
 
@@ -74,7 +75,7 @@ if (problemType == "TSP") {
     });
 
     if (params.nbWorkers != 0)
-        solver.solve(model, params);
+        solver.solve(model, params).then(_ => { if (!heuristics.killed) heuristics.kill(); });
 } else if (problemType == "VRP-TW") {
     let [model, vars] = defineModelVRPTW(instance, instanceFilename);
 
@@ -89,12 +90,9 @@ if (problemType == "TSP") {
     });
 
     if (params.nbWorkers != 0)
-        solver.solve(model, params);
+        solver.solve(model, params).then(_ => { if (!heuristics.killed) heuristics.kill(); });
 }
 
-if (!heuristics.killed) { // End heuristics if the optimal solution was found
-    heuristics.kill();
-}
 
 
 

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "individual.h"
+#include "mutation.h"
 #include <memory>
 #include <vector>
 

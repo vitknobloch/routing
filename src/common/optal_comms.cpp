@@ -27,6 +27,9 @@ void OptalComms::run() {
     if(std::getline(std::cin, solution_string)){
       //received solution from Optal
       new_solution = serializer_->parseSolution(solution_string);
+      if(new_solution == nullptr)
+        continue;
+
       std::lock_guard<std::mutex> lock(solution_lock_);
       if (best_solution_ == nullptr || new_solution->objective < best_solution_->objective) {
         best_solution_ = new_solution;

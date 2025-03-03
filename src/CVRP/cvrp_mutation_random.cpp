@@ -10,7 +10,7 @@ CvrpMutationRandom::CvrpMutationRandom(
     const std::shared_ptr<RoutingInstance> &instance) {
   instance_ = instance;
   gen = std::mt19937(rand());
-
+  mutation_rate_ = 1.0;
 }
 bool CvrpMutationRandom::mutate(const std::shared_ptr<Individual> &individual) {
   auto individual_ = std::static_pointer_cast<CvrpIndividual>(individual);
@@ -29,7 +29,6 @@ bool CvrpMutationRandom::mutate(const std::shared_ptr<Individual> &individual) {
     mutate2optInsideRoute(individual_, route_start, route_length);
 
   }
-
 
   return true;
 }
@@ -367,3 +366,5 @@ int CvrpMutationRandom::selectIdxToExchange(
 
 inline bool CvrpMutationRandom::isCustomer(const uint &node) { return node > 0 && node < (uint)instance_->getNodesCount();}
 inline bool CvrpMutationRandom::isDepot(const uint &node) { return !isCustomer(node); }
+double CvrpMutationRandom::getMutationRate() { return mutation_rate_; }
+double CvrpMutationRandom::setMutationRate(double mutation_rate) { mutation_rate_ = mutation_rate; }

@@ -107,4 +107,59 @@ void TspIndividual::calculateConstraints() {}
 const std::vector<double> &TspIndividual::getConstraintViolations() {
   return std::vector<double>();
 }
+
 double TspIndividual::getTotalConstraintViolation() { return 0; }
+
+std::shared_ptr<Solution> TspIndividual::convertSolution() {
+  uint zero_idx; // Find the first node index
+  for(zero_idx = 0; zero_idx < data_.size(); zero_idx++){
+    if(data_[zero_idx] == 0)
+      break;
+  }
+  // Fill out nodes
+  auto nodes = std::list<SolutionNode>();
+  int start_time = 0;
+  for(uint i = 0; i < data_.size(); i++){
+    auto node = SolutionNode();
+    node.idx = (int)data_[(zero_idx + i) % data_.size()];
+    node.start_time = start_time;
+    node.end_time = start_time + 1;
+    const uint next_node = data_[(zero_idx + i + 1) % data_.size()];
+    start_time += 1 + matrix_[node.idx * data_.size() + next_node];
+    nodes.push_back(node);
+  }
+  auto last_node = SolutionNode();
+  last_node.idx = 0;
+  last_node.start_time = start_time;
+  last_node.end_time = start_time + 1;
+  nodes.push_back(last_node);
+
+  // Fill out objectives
+  auto solution = std::make_shared<Solution>();
+  const auto objective = fitness_;
+  solution->objective = objective;
+  solution->travel_time_sum = objective;
+  solution->end_time_sum = last_node.end_time;
+  solution->routes = std::list<SolutionRoute>();
+  auto route = SolutionRoute();
+  route.demand = -1;
+  route.end_time = solution->end_time_sum;
+  route.travel_time = objective;
+  route.route_nodes = nodes;
+  solution->routes.push_back(route);
+
+  return solution;
+}
+
+TspIndividual::TspIndividual(const RoutingInstance *const instance,
+                             const std::shared_ptr<Solution> &solution) : TspIndividual(instance) {
+  data_.reserve(instance_->getNodesCount());
+  uint i = 0;
+  for(const auto &node: solution->routes.front().route_nodes){
+    data_.push_back(node.idx);
+    i++;
+    if(i >= (uint)instance_->getNodesCount())
+      break;
+  }
+  setFitness(solution->objective);
+}

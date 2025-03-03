@@ -6,6 +6,7 @@
 
 #include "heuristic_framework/individual.h"
 #include "common/routing_instance.h"
+#include "common/solution.h"
 
 using uint = unsigned int;
 
@@ -21,11 +22,12 @@ private:
 
 public:
   explicit TspIndividual(const RoutingInstance* const instance);
+  explicit TspIndividual(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
   TspIndividual(const TspIndividual &other);
   void initialize() override;
   void initializeNearestNeighbor();
   std::vector<uint> &data();
-  void resetEvaluated();
+  void resetEvaluated() override;
   void setFitness(double fitness);
   bool betterThan(const std::shared_ptr<Individual> &other) override;
   void calculateFitness() override;
@@ -36,5 +38,7 @@ public:
   void calculateConstraints() override;
   const std::vector<double> &getConstraintViolations() override;
   double getTotalConstraintViolation() override;
+  std::shared_ptr<Solution> convertSolution();
+  void convertSolution(const std::shared_ptr<Solution> &solution);
   ~TspIndividual() override = default;
 };

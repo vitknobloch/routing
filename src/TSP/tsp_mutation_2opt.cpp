@@ -46,5 +46,10 @@ bool TspMutation2opt::mutate(const std::shared_ptr<Individual> &individual) {
 
 TspMutation2opt::TspMutation2opt(const uint * const matrix) : matrix_(matrix) {
   gen = std::mt19937(rand());
-
+  mutation_rate_ = 1.0;
 }
+void TspMutation2opt::setMutationRate(double mutation_rate) {
+  assert(mutation_rate >= 0.0 && mutation_rate <= 1.0);
+  mutation_rate_ = mutation_rate;
+}
+double TspMutation2opt::getMutationRate() { return mutation_rate_;}

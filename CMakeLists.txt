@@ -33,6 +33,7 @@ set(HEURISTIC_FRAMEWORK
         src/heuristic_framework/population.cpp
         src/heuristic_framework/tournament_selection.cpp
         src/heuristic_framework/truncation_replacement.cpp
+        src/heuristic_framework/genetic_algorithm.cpp
 )
 
 set(TSP
@@ -40,6 +41,8 @@ set(TSP
         src/TSP/tsp_individual.cpp
         src/TSP/tsp_local_search.cpp
         src/TSP/tsp_mutation_2opt.cpp
+        src/TSP/tsp_pmx_crossover.cpp
+        src/TSP/tsp_genetic_algorithm.cpp
 )
 
 set(CVRP

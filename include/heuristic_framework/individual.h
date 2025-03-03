@@ -9,6 +9,7 @@
 class Individual{
 public:
   virtual bool isEvaluated() = 0;
+  virtual void resetEvaluated() = 0;
   virtual void evaluate() = 0;
   virtual void calculateFitness() = 0;
   virtual void calculateConstraints() = 0;

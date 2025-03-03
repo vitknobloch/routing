@@ -26,12 +26,10 @@ std::vector<uint> TournamentSelection::
   for(uint i = 0; i < select_count; i++){
     const uint first_idx = i * tournament_size_;
     uint best_in_tournament = rand_vector[first_idx];
-    for(uint j = 1; j < tournament_size_; j++){
-      if(population->isBetter((int)rand_vector[first_idx + j], (int)best_in_tournament)){
+    for(uint j = 1; j < tournament_size_; j++)
+      if(population->isBetter((int)rand_vector[first_idx + j], (int)best_in_tournament))
         best_in_tournament = rand_vector[first_idx + j];
-      }
-      selected.push_back(best_in_tournament);
-    }
+    selected.push_back(best_in_tournament);
   }
 
   assert(selected.size() == select_count);
