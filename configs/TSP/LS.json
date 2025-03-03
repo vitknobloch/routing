@@ -1,0 +1,14 @@
+{
+  "problem": "TSP",
+  "heuristics": [
+    {
+      "type": "local_search",
+      "mutation": "random"
+    }
+  ],
+  "optal": {
+    "LNS": 0,
+    "FDS": 0,
+    "neighborhoodStrategy": 2
+  }
+}

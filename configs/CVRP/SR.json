@@ -1,0 +1,13 @@
+{
+  "problem": "CVRP",
+  "heuristics": [
+    {
+      "type": "stochastic_ranking"
+    }
+  ],
+  "optal": {
+    "LNS": 0,
+    "FDS": 0,
+    "neighborhoodStrategy": 2
+  }
+}
