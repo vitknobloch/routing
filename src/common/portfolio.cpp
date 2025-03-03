@@ -22,31 +22,11 @@ void HeuristicPortfolio::addConstructiveHeuristic(
 }
 
 void HeuristicPortfolio::start() {
+  initializeThreads();
   if(logger_ != nullptr){
     logger_->startClock();
   }
-
-  std::vector<std::thread> threads;
-  threads.reserve(constructive_heuristics_.size() + improving_heuristics_.size());
-  // start constructive heuristics
-  for(auto& heur: constructive_heuristics_){
-    threads.emplace_back([this, heur]()->void{ startThread(heur);});
-  }
-
-  // start improving heuristics
-  for(auto& heur: improving_heuristics_){
-    threads.emplace_back([this, heur]()->void{ startThread(heur);});
-  }
-
-  //wait for threads to finish
-  for(auto &thread : threads){
-    thread.join();
-  }
-}
-
-void HeuristicPortfolio::startThread(const std::shared_ptr<Heuristic>& heuristic) {
-  heuristic->initialize(this);
-  heuristic->run();
+  runThreads();
 }
 
 void HeuristicPortfolio::terminate() {
@@ -79,4 +59,42 @@ void HeuristicPortfolio::sendSolution() {
 void HeuristicPortfolio::setLogger(
     const std::shared_ptr<ObjectiveValueLogger> &logger) {
   logger_ = logger;
+}
+
+void HeuristicPortfolio::initializeThreads() {
+  std::vector<std::thread> threads;
+  threads.reserve(constructive_heuristics_.size() + improving_heuristics_.size());
+  // start constructive heuristics
+  for(auto& heur: constructive_heuristics_){
+    threads.emplace_back([this, heur]()->void{ heur->initialize(this);});
+  }
+
+  // start improving heuristics
+  for(auto& heur: improving_heuristics_){
+    threads.emplace_back([this, heur]()->void{ heur->initialize(this);});
+  }
+
+  //wait for threads to finish
+  for(auto &thread : threads){
+    thread.join();
+  }
+}
+
+void HeuristicPortfolio::runThreads() {
+  std::vector<std::thread> threads;
+  threads.reserve(constructive_heuristics_.size() + improving_heuristics_.size());
+  // start constructive heuristics
+  for(auto& heur: constructive_heuristics_){
+    threads.emplace_back([this, heur]()->void{ heur->run();});
+  }
+
+  // start improving heuristics
+  for(auto& heur: improving_heuristics_){
+    threads.emplace_back([this, heur]()->void{ heur->run();});
+  }
+
+  //wait for threads to finish
+  for(auto &thread : threads){
+    thread.join();
+  }
 }

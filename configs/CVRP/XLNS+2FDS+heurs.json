@@ -1,8 +1,16 @@
 {
     "problem": "CVRP",
-    "heuristics": [],
+    "heuristics": [
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "stochastic_ranking"
+        }
+    ],
     "optal": {
-        "LNS": X,
+        "LNS": 8,
         "FDS": 2,
         "neighborhoodStrategy": 2
     }

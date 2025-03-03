@@ -11,7 +11,6 @@ StochasticRanking::StochasticRanking(
   mutation_ = mutation;
   selection_ = std::make_shared<TournamentSelection>(tournament_size);
   crossover_ = crossover;
-  replacement_ = std::make_shared<TruncationReplacement>();
   callbacks_ = callbacks;
   population_ = std::make_shared<PopulationStochasticRanking>(0.5);
   best_individual_ = nullptr;
@@ -41,6 +40,7 @@ void StochasticRanking::run(
     for(uint i = 0; i < child_pop->size(); i++){
       if(getRandomBool(mutation_->getMutationRate())){
         const auto &individual = child_pop->getIndividual(i);
+        individual->evaluate();
         mutation_->mutate(individual);
         individual->resetEvaluated();
       }
@@ -50,7 +50,10 @@ void StochasticRanking::run(
     if(checkBetterSolution(child_pop->getBestIndividual())){
       callbacks_->newBestSolution(child_pop->getBestIndividual());
     }
-    population_ = std::static_pointer_cast<PopulationStochasticRanking>(replacement_->replacementFunction(population_, child_pop, population_->size()));
+    uint prev_size = population_->size();
+    population_->merge(child_pop);
+    population_->rank();
+    population_->shrink(prev_size);
   }
 }
 

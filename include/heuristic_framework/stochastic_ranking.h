@@ -20,7 +20,6 @@ private:
   std::shared_ptr<Mutation> mutation_;
   std::shared_ptr<TournamentSelection> selection_;
   std::shared_ptr<Crossover> crossover_;
-  std::shared_ptr<TruncationReplacement> replacement_;
   std::shared_ptr<Callbacks> callbacks_;
   std::shared_ptr<PopulationStochasticRanking> population_;
   std::shared_ptr<Individual> best_individual_;

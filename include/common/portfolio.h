@@ -30,7 +30,8 @@ private:
   /** Sends current best-so-far solution to stdout and to the improving heuristics */
   void sendSolution();
 
-  void startThread(const std::shared_ptr<Heuristic>& heuristic);
+  void initializeThreads();
+  void runThreads();
 
 public:
   HeuristicPortfolio();

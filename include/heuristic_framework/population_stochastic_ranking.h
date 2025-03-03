@@ -17,6 +17,7 @@ private:
 public:
   PopulationStochasticRanking(double fitness_comp_prob);
   void setFitnessCompareProbability(double fitness_comp_prob);
+  void shrink(uint new_size);
 
   void rank() override;
   bool isBetter(int idx, int idx_other) override;

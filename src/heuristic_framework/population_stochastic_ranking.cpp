@@ -78,3 +78,25 @@ inline bool PopulationStochasticRanking::stochasticallyWorseThan(
   }
   return false;
 }
+
+void PopulationStochasticRanking::shrink(uint new_size) {
+  if(!ranked_)
+    rank();
+  if(new_size > size())
+    new_size = size();
+
+  for(uint i = 0; i < new_size; i++){
+    uint idx = ranks_[i];
+    std::swap(population_[idx], population_[i]);
+    ranks_[idx_to_rank_[i]] = idx;
+  }
+
+  for(uint i = 0; i < new_size; i++){
+    ranks_[i] = i;
+    idx_to_rank_[i] = i;
+  }
+
+  population_.resize(new_size);
+  ranks_.resize(new_size);
+  idx_to_rank_.resize(new_size);
+}
