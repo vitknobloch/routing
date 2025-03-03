@@ -24,7 +24,7 @@ SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
   auto optalComms = std::make_shared<OptalComms>(serializer);
   portfolio->addImprovingHeuristic(optalComms);
 
-  for(int h = 0; h < config.size(); h++){
+  for(uint h = 0; h < config.size(); h++){
     auto heur_config = config[h];
     if(!heur_config.contains("type"))
         std::cerr << "Heuristic config doesn't contain type." << std::endl;

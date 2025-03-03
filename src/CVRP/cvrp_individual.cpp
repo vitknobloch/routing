@@ -227,7 +227,7 @@ std::shared_ptr<Solution> CvrpIndividual::convertSolution() {
   solution->routes.back().demand = demand;
   solution->routes.back().end_time = time;
 
-  assert(solution->routes.size() == instance_->getVehicleCount());
+  assert(solution->routes.size() == (uint)instance_->getVehicleCount());
 
   solution->end_time_sum += time;
   solution->travel_time_sum += travel_time;

@@ -134,7 +134,7 @@ void CvrpMutationRandom::mutateKick(
     return;
   }
 
-  if (kicked_idx < insert_idx) {
+  if (kicked_idx < (uint)insert_idx) {
     // Shift left
     for (int i = kicked_idx; i < insert_idx; ++i) {
       data[i] = data[i + 1];
@@ -326,9 +326,9 @@ int CvrpMutationRandom::selectIdxToExchange(
     i = (i+1) % data.size();
     if(!isDepot(data[i])){
       vehicle_demand += nodes[data[i]].demand;
-      if(nodes[data[i]].demand > max_demand)
+      if(nodes[data[i]].demand > (int)max_demand)
         max_demand = nodes[data[i]].demand;
-      if(nodes[data[i]].demand < min_demand)
+      if(nodes[data[i]].demand < (int)min_demand)
         min_demand = nodes[data[i]].demand;
       if(kicked_idx == i){
         vehicle_demand += instance_->getVehicleCapacity();
@@ -367,4 +367,4 @@ int CvrpMutationRandom::selectIdxToExchange(
 inline bool CvrpMutationRandom::isCustomer(const uint &node) { return node > 0 && node < (uint)instance_->getNodesCount();}
 inline bool CvrpMutationRandom::isDepot(const uint &node) { return !isCustomer(node); }
 double CvrpMutationRandom::getMutationRate() { return mutation_rate_; }
-double CvrpMutationRandom::setMutationRate(double mutation_rate) { mutation_rate_ = mutation_rate; }
+void CvrpMutationRandom::setMutationRate(double mutation_rate) { mutation_rate_ = mutation_rate; }

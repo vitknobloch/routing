@@ -33,5 +33,5 @@ public:
   bool isInPlace() override;
   bool mutate(const std::shared_ptr<Individual> &individual) override;
   double getMutationRate() override;
-  double setMutationRate(double mutation_rate);
+  void setMutationRate(double mutation_rate);
 };

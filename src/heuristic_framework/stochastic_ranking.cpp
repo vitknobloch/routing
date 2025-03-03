@@ -76,7 +76,7 @@ bool StochasticRanking::checkOutsideSolution(
   }
   if(population_ == nullptr)
     return false;
-  population_->addIndividual(outside_solution_);
+  population->addIndividual(outside_solution_);
   outside_solution_ = nullptr;
   return true;
 }
