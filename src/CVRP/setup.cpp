@@ -6,6 +6,8 @@
 
 #include "CVRP/cvrp_local_search.h"
 #include "CVRP/cvrp_mutation_random.h"
+#include "CVRP/cvrp_pmx_crossover.h"
+#include "CVRP/cvrp_stochastic_ranking.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
 
@@ -28,6 +30,21 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
       auto mutation = std::make_shared<CvrpMutationRandom>(instance);
       auto localSearch = std::make_shared<CvrpLocalSearch>(instance, mutation);
       portfolio->addImprovingHeuristic(localSearch);
+    }
+    else if(heur_config["type"] == "stochastic_ranking"){
+      auto mutation = std::make_shared<CvrpMutationRandom>(instance);
+      mutation->setMutationRate(1.0);
+      auto crossover = std::make_shared<CvrpPmxCrossover>();
+      crossover->setCrossoverRate(1.0);
+      auto stochasticRanking = std::make_shared<CvrpStochasticRanking>(
+          instance,
+          mutation,
+          crossover,
+          10, // Population size
+          3, // tournament size
+          0.55 // fitness compare probability
+          );
+      portfolio->addImprovingHeuristic(stochasticRanking);
     }
   }
 

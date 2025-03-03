@@ -23,7 +23,7 @@ TspPmxCrossover::crossover(const std::shared_ptr<Population> &population,
                            const std::vector<uint> &parents) {
   if(parents.empty())
     return nullptr;
-  auto return_pop = std::make_shared<Population>();
+  auto return_pop = population->getEmpty();
   const auto &representative = population->getIndividual(0);
   const auto &representative_ = std::static_pointer_cast<TspIndividual>(representative);
   std::uniform_int_distribution<uint> distribution(0, representative_->data().size() - 1);

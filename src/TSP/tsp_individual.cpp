@@ -147,6 +147,7 @@ std::shared_ptr<Solution> TspIndividual::convertSolution() {
   route.travel_time = objective;
   route.route_nodes = nodes;
   solution->routes.push_back(route);
+  solution->feasible = true;
 
   return solution;
 }

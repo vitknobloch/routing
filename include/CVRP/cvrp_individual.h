@@ -6,6 +6,7 @@
 
 #include "heuristic_framework/individual.h"
 #include "common/routing_instance.h"
+#include "common/solution.h"
 
 using uint = unsigned int;
 
@@ -20,6 +21,7 @@ private:
 
 public:
   explicit CvrpIndividual(const RoutingInstance* const instance);
+  explicit CvrpIndividual(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
   CvrpIndividual(const CvrpIndividual &other);
   void initialize() override;
   std::vector<uint> &data();
@@ -35,5 +37,6 @@ public:
   void calculateConstraints() override;
   const std::vector<double> &getConstraintViolations() override;
   double getTotalConstraintViolation() override;
+  std::shared_ptr<Solution> convertSolution();
   ~CvrpIndividual() override = default;
 };

@@ -34,6 +34,8 @@ set(HEURISTIC_FRAMEWORK
         src/heuristic_framework/tournament_selection.cpp
         src/heuristic_framework/truncation_replacement.cpp
         src/heuristic_framework/genetic_algorithm.cpp
+        src/heuristic_framework/population_stochastic_ranking.cpp
+        src/heuristic_framework/stochastic_ranking.cpp
 )
 
 set(TSP
@@ -50,6 +52,8 @@ set(CVRP
         src/CVRP/cvrp_individual.cpp
         src/CVRP/cvrp_local_search.cpp
         src/CVRP/cvrp_mutation_random.cpp
+        src/CVRP/cvrp_stochastic_ranking.cpp
+        src/CVRP/cvrp_pmx_crossover.cpp
 )
 
 set(VRP-TW

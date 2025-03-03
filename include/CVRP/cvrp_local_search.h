@@ -20,8 +20,6 @@ private:
   std::recursive_mutex solution_mutex_;
   std::shared_ptr<LocalSearch> local_search_;
 
-  std::shared_ptr<Solution> convertSolution(const std::shared_ptr<CvrpIndividual> &individual);
-  std::shared_ptr<CvrpIndividual> convertSolution(const std::shared_ptr<Solution> &solution);
   void sendSolution(const std::shared_ptr<Solution>& solution);
   bool checkBetterSolution(const std::shared_ptr<Solution> &solution);
 

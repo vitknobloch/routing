@@ -39,6 +39,5 @@ public:
   const std::vector<double> &getConstraintViolations() override;
   double getTotalConstraintViolation() override;
   std::shared_ptr<Solution> convertSolution();
-  void convertSolution(const std::shared_ptr<Solution> &solution);
   ~TspIndividual() override = default;
 };

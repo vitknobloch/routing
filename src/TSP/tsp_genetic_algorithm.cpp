@@ -2,6 +2,7 @@
 // Created by knoblvit on 2.3.25.
 //
 #include "TSP/tsp_genetic_algorithm.h"
+#include <cassert>
 #include <iostream>
 
 TspGeneticAlgorithm::TspGeneticAlgorithm(
@@ -44,6 +45,7 @@ void TspGeneticAlgorithm::run() {
     initial_population->addIndividual(individual);
   }
 
+  assert(genetic_algorithm_ != nullptr);
   genetic_algorithm_->run(initial_population);
 }
 
