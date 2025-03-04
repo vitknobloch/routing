@@ -17,17 +17,31 @@ bool CvrpMutationRandom::mutate(const std::shared_ptr<Individual> &individual) {
 
   std::uniform_real_distribution<double> dist_mutation(0.0, 1.0);
   double selection = dist_mutation(gen);
-  if (individual_->getTotalConstraintViolation() > 0 || selection < 0.1) {
-    mutateKick(individual_);
-  }else if(selection < 0.2){
-    mutateExchange(individual_);
-  }else{
-    std::uniform_int_distribution<uint> dist_route(0, individual_->data().size() - 1);
-    uint route_start, route_length;
-    uint random_idx = dist_route(gen);
-    getRouteStartAndLength(individual_->data(), random_idx, &route_start, &route_length);
-    mutate2optInsideRoute(individual_, route_start, route_length);
-
+  if(individual_->getTotalConstraintViolation() > 0){
+    if(selection < 0.45){
+      mutateKick(individual_);
+    }
+    else if( selection < 0.9){
+      mutateExchangeDemandViolated(individual_);
+    }else{
+      mutate2opt(individual_);
+    }
+  }
+  else{
+    if(selection < 0.1){
+      mutateKick(individual_);
+    }
+    else if(selection < 0.25){
+      mutateExchange(individual_);
+    }else if(selection < 0.9){
+      std::uniform_int_distribution<uint> dist_route(0, individual_->data().size() - 1);
+      uint route_start, route_length;
+      uint random_idx = dist_route(gen);
+      getRouteStartAndLength(individual_->data(), random_idx, &route_start, &route_length);
+      mutate2optInsideRoute(individual_, route_start, route_length);
+    }else{
+      mutate2opt(individual_);
+    }
   }
 
   return true;
@@ -261,6 +275,7 @@ void CvrpMutationRandom::mutateExchange(
     std::shared_ptr<CvrpIndividual> &individual) {
   auto &data = individual->data();
   uint kicked_idx = selectIdxToKick(individual);
+
   int insert_idx = selectIdxToExchange(individual, kicked_idx);
   if(insert_idx == -1)
     return;
@@ -368,3 +383,136 @@ inline bool CvrpMutationRandom::isCustomer(const uint &node) { return node > 0 &
 inline bool CvrpMutationRandom::isDepot(const uint &node) { return !isCustomer(node); }
 double CvrpMutationRandom::getMutationRate() { return mutation_rate_; }
 void CvrpMutationRandom::setMutationRate(double mutation_rate) { mutation_rate_ = mutation_rate; }
+
+void CvrpMutationRandom::mutateExchangeDemandViolated(
+    std::shared_ptr<CvrpIndividual> &individual) {
+  auto &data = individual->data();
+  uint kicked_idx = selectIdxToKick(individual);
+
+  int insert_idx = selectIdxToExchangeDemandViolated(individual, kicked_idx);
+  if(insert_idx == -1)
+    return;
+  uint kicked_node = data[kicked_idx];
+  uint exchange_node = data[insert_idx];
+  assert(isCustomer(kicked_node));
+  assert(isCustomer(exchange_node));
+
+  uint temp = data[kicked_idx];
+  data[kicked_idx] = data[insert_idx];
+  data[insert_idx] = temp;
+
+  //assert(individual->assertData());
+  individual->resetEvaluated();
+  individual->evaluate();
+}
+
+int CvrpMutationRandom::selectIdxToExchangeDemandViolated(
+    std::shared_ptr<CvrpIndividual> &individual, uint kicked_idx) {
+  const auto &nodes = instance_->getNodes();
+  auto &data = individual->data();
+  const uint kicked_node = data[kicked_idx];
+  const uint kicked_demand = nodes[kicked_node].demand;
+  const uint prev_kicked = data[(kicked_idx - 1 + data.size()) % data.size()];
+  const uint next_kicked = data[(kicked_idx+1) % data.size()];
+  assert(isCustomer(kicked_node));
+  uint i = kicked_idx;
+
+  while(!isDepot(data[i])){
+    i = (i - 1 + data.size()) % data.size();
+  }
+  uint kicked_vehicle_start = i;
+  uint kicked_vehicle_demand = 0;
+  i = (i+1) % data.size();
+  while(!isDepot(data[i])){
+    kicked_vehicle_demand += nodes[data[i]].demand;
+    i = (i+1) % data.size();
+  }
+  uint kicked_vehicle_end = i;
+
+  uint last_vehicle_start = i;
+  uint best_demand_violation = individual->getTotalConstraintViolation();
+  int best_cost = std::numeric_limits<int>::max();
+  int best_idx = -1;
+  uint min_demand = instance_->getVehicleCapacity();
+  uint max_demand = 0;
+  uint vehicle_demand = 0;
+  while(i != kicked_vehicle_start){
+    i = (i+1) % data.size();
+    if(!isDepot(data[i])){
+      vehicle_demand += nodes[data[i]].demand;
+      if(nodes[data[i]].demand > (int)max_demand)
+        max_demand = nodes[data[i]].demand;
+      if(nodes[data[i]].demand < (int)min_demand)
+        min_demand = nodes[data[i]].demand;
+      if(kicked_idx == i){
+        vehicle_demand += instance_->getVehicleCapacity();
+      }
+    }
+    else{ // end of vehicle
+      uint new_demand_violation = (uint)individual->getTotalConstraintViolation();
+      new_demand_violation -= std::max(0, (int)kicked_vehicle_demand - instance_->getVehicleCapacity());
+      new_demand_violation -= std::max(0, (int)vehicle_demand - instance_->getVehicleCapacity());
+      uint min_new_demand_violation = new_demand_violation +
+                                     std::max(0u, vehicle_demand - max_demand + kicked_demand) +
+                                     std::max(0u, kicked_vehicle_demand - kicked_demand + min_demand);
+      if(min_new_demand_violation < best_demand_violation){
+        i = (last_vehicle_start + 1) % data.size();
+        while(!isDepot(data[i])){
+          const uint node = data[i];
+          uint node_demand_violation = new_demand_violation +
+                                       std::max(0u, vehicle_demand - nodes[node].demand + kicked_demand) +
+                                       std::max(0u, kicked_vehicle_demand - kicked_demand + nodes[node].demand);
+          if(node_demand_violation <= best_demand_violation){
+            const uint prev_node = data[(i - 1 + data.size()) % data.size()];
+            const uint next_node = data[(i+1) % data.size()];
+            int cost = instance_->getDistance(prev_node, kicked_node) + instance_->getDistance(kicked_node, next_node);
+            cost += instance_->getDistance(prev_kicked, node) + instance_->getDistance(node, next_kicked);
+            cost -= instance_->getDistance(prev_node, node) + instance_->getDistance(node, next_node);
+            cost -= instance_->getDistance(prev_kicked, kicked_node) + instance_->getDistance(kicked_node, next_kicked);
+            if(node_demand_violation < best_demand_violation || cost < best_cost){
+              best_cost = cost;
+              best_demand_violation = node_demand_violation;
+              best_idx = i;
+            }
+          }
+          i = (i + 1) % data.size();
+        }
+      }
+      vehicle_demand = 0;
+      min_demand = instance_->getVehicleCapacity();
+      max_demand = 0;
+      last_vehicle_start = i;
+    }
+  }
+  return best_idx;
+}
+
+bool CvrpMutationRandom::mutate2opt(
+    std::shared_ptr<CvrpIndividual> &individual) {
+  auto new_individual_ = individual->deepcopy();
+  auto new_individual = std::static_pointer_cast<CvrpIndividual>(new_individual_);
+  auto &data = new_individual->data();
+  std::uniform_int_distribution<uint> dist(0, data.size() - 1);
+
+  const uint start = dist(gen);
+  const uint length = dist(gen);
+  if(length == data.size() - 1)
+    return true;
+  const uint end = (start + length) % data.size();
+
+  for(uint i = 0; i <= length / 2; i++){
+    uint temp = data[(start + i) % data.size()];
+    data[(start + i) % data.size()] = data[(end + data.size() - i) % data.size()];
+    data[(end + data.size() - i) % data.size()] = temp;
+  }
+
+  new_individual->resetEvaluated();
+  new_individual->evaluate();
+  if(new_individual->betterThan(individual)){
+    individual->data() = new_individual->data();
+    individual->resetEvaluated();
+    individual->evaluate();
+  }
+
+  return true;
+}

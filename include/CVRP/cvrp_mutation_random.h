@@ -20,10 +20,13 @@ private:
   int wrapWithinSpan(int begin, int length, int initial, int shift);
   void mutateKick(std::shared_ptr<CvrpIndividual> &individual);
   void mutateExchange(std::shared_ptr<CvrpIndividual> &individual);
+  void mutateExchangeDemandViolated(std::shared_ptr<CvrpIndividual> &individual);
   uint selectIdxToKick(std::shared_ptr<CvrpIndividual> &individual);
   uint selectIdxToKickDemandViolated(std::shared_ptr<CvrpIndividual> &individual, uint start_idx);
   int selectIdxToExchange(std::shared_ptr<CvrpIndividual> &individual, uint kicked_idx);
   int selectInsertIndex(std::shared_ptr<CvrpIndividual> &individual, uint kicked_idx);
+  int selectIdxToExchangeDemandViolated(std::shared_ptr<CvrpIndividual> &sharedPtr, uint kicked_idx);
+  bool mutate2opt(std::shared_ptr<CvrpIndividual> &individual);
 
   inline bool isCustomer(const uint &node);
   inline bool isDepot(const uint &node);
@@ -34,4 +37,5 @@ public:
   bool mutate(const std::shared_ptr<Individual> &individual) override;
   double getMutationRate() override;
   void setMutationRate(double mutation_rate);
+
 };
