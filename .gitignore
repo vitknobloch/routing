@@ -6,3 +6,4 @@ logs
 .idea
 package-lock.json
 scripts/*.js
+ilog_models
