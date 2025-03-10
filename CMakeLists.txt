@@ -58,6 +58,7 @@ set(CVRP
 
 set(VRP-TW
     src/VRP-TW/setup.cpp
+        src/VRP-TW/vrptw_individual.cpp
 )
 
 add_executable(Heuristic

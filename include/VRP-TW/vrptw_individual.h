@@ -1,5 +1,5 @@
 //
-// Created by knoblvit on 24.2.25.
+// Created by knoblvit on 9.3.25.
 //
 
 #pragma once
@@ -10,19 +10,20 @@
 
 using uint = unsigned int;
 
-class CvrpIndividual: public Individual{
+class VrptwIndividual : public Individual{
 private:
   const RoutingInstance* const instance_;
   const uint * const matrix_;
   std::vector<uint> data_;
   bool is_evaluated_;
   double fitness_;
-  double capacity_constraint_violation_;
+  double total_constraint_violation_;
+  std::vector<double> constraint_violations_;
 
 public:
-  explicit CvrpIndividual(const RoutingInstance* const instance);
-  explicit CvrpIndividual(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
-  CvrpIndividual(const CvrpIndividual &other);
+  explicit VrptwIndividual(const RoutingInstance* const instance);
+  explicit VrptwIndividual(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
+  VrptwIndividual(const VrptwIndividual &other);
   void initialize() override;
   std::vector<uint> &data();
   void resetEvaluated() override;
@@ -38,5 +39,5 @@ public:
   const std::vector<double> &getConstraintViolations() override;
   double getTotalConstraintViolation() override;
   std::shared_ptr<Solution> convertSolution();
-  ~CvrpIndividual() override = default;
+  ~VrptwIndividual() override = default;
 };

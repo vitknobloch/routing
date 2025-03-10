@@ -73,7 +73,8 @@ export function defineModelCVRP(instance: ParseResult, filename: string, visit_d
         for (let i = 0; i < nbCustomers; i++)
             visits[i].push(myVisits[i]);
 
-        model.noOverlap(myVisits, customerMatrix);
+        let sequence = model.sequenceVar(myVisits);
+        model.noOverlap(sequence, customerMatrix);
 
         // Constraints for the depot:
         let last = model.intervalVar({ length: 0, name: `last_${v + 1}`, end: [0, horizon] });
@@ -198,10 +199,10 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
         for (let i = 0; i < nbCustomers; i++)
             visits[i].push(myVisits[i]);
 
-        model.noOverlap(myVisits, customerMatrix);
+        let sequence = model.sequenceVar(myVisits);
+        model.noOverlap(sequence, customerMatrix);
 
         // Constraints for the depot:
-
         let last = model.intervalVar({ length: 0, name: `last_${v + 1}`, end: [0, horizon] });
         for (let i = 0; i < nbCustomers; i++) {
             // We don't model the initial depot visit at all. It is known to be at time 0.
