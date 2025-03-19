@@ -67,7 +67,7 @@ add_executable(Heuristic
         ${HEURISTIC_FRAMEWORK}
         ${TSP}
         ${CVRP}
-        ${VRP-TW}
+        #${VRP-TW}
 )
 
 target_link_libraries(Heuristic PRIVATE nlohmann_json::nlohmann_json)
