@@ -1,0 +1,52 @@
+{
+    "problem": "TSP",
+    "heuristics": [
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "genetic_algorithm"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        }
+    ],
+    "optal": {
+        "LNS": 0,
+        "FDS": 0,
+        "neighborhoodStrategy": 2
+    }
+}

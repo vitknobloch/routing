@@ -1,0 +1,52 @@
+{
+    "problem": "CVRP",
+    "heuristics": [
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "local_search",
+            "mutation": "random"
+        },
+        {
+            "type": "stochastic_ranking"
+        },
+        {
+            "type": "stochastic_ranking"
+        },
+        {
+            "type": "stochastic_ranking"
+        },
+        {
+            "type": "stochastic_ranking"
+        },
+        {
+            "type": "stochastic_ranking"
+        },
+        {
+            "type": "stochastic_ranking"
+        }
+    ],
+    "optal": {
+        "LNS": 0,
+        "FDS": 0,
+        "neighborhoodStrategy": 2
+    }
+}
