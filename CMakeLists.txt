@@ -50,6 +50,7 @@ set(TSP
 set(CVRP
     src/CVRP/setup.cpp
         src/CVRP/cvrp_individual.cpp
+        src/CVRP/cvrp_structured_individual.cpp
         src/CVRP/cvrp_local_search.cpp
         src/CVRP/cvrp_mutation_random.cpp
         src/CVRP/cvrp_stochastic_ranking.cpp
@@ -59,6 +60,7 @@ set(CVRP
 set(VRP-TW
     src/VRP-TW/setup.cpp
         src/VRP-TW/vrptw_individual.cpp
+        src/VRP-TW/vrptw_mutation_random.cpp
 )
 
 add_executable(Heuristic
@@ -67,7 +69,7 @@ add_executable(Heuristic
         ${HEURISTIC_FRAMEWORK}
         ${TSP}
         ${CVRP}
-        #${VRP-TW}
+        ${VRP-TW}
 )
 
 target_link_libraries(Heuristic PRIVATE nlohmann_json::nlohmann_json)
