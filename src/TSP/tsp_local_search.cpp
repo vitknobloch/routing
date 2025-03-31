@@ -36,7 +36,7 @@ void TspLocalSearch::initialize(HeuristicPortfolio *portfolio) {
     if(checkBetterSolution(solution))
       sendSolution(solution);
   });
-  local_search_ = std::make_shared<LocalSearch>(callbacks, mutation_);
+  local_search_ = std::make_shared<StochasticLocalSearch>(callbacks, mutation_);
 }
 
 void TspLocalSearch::terminate() {

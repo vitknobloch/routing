@@ -25,6 +25,7 @@ public:
   explicit VrptwIndividual(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
   VrptwIndividual(const VrptwIndividual &other);
   void initialize() override;
+  void smartInitialize() override;
   std::vector<uint> &data();
   void resetEvaluated() override;
   bool assertData();

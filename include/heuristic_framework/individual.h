@@ -13,7 +13,10 @@ public:
   virtual void evaluate() = 0;
   virtual void calculateFitness() = 0;
   virtual void calculateConstraints() = 0;
+  /** Basic initialization to correct individual */
   virtual void initialize() = 0;
+  /** Smart randomized initialization with possible basic optimizations */
+  virtual void smartInitialize() = 0;
   virtual double getFitness() = 0;
   virtual double getTotalConstraintViolation() = 0;
   virtual const std::vector<double> &getConstraintViolations() = 0;

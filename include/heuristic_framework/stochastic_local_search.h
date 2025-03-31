@@ -10,7 +10,7 @@
 #include "individual.h"
 #include "callbacks.h"
 
-class LocalSearch{
+class StochasticLocalSearch {
 private:
   std::shared_ptr<Mutation> mutation_;
   std::shared_ptr<Callbacks> callbacks_;
@@ -22,9 +22,7 @@ private:
   bool checkOutsideSolution();
 
 public:
-  LocalSearch(const std::shared_ptr<Callbacks> &callbacks, const std::shared_ptr<Mutation> &mutation);
+  StochasticLocalSearch(const std::shared_ptr<Callbacks> &callbacks, const std::shared_ptr<Mutation> &mutation);
   void acceptOutsideSolution(const std::shared_ptr<Individual> &individual);
   void run(const std::shared_ptr<Individual> &initialSolution);
-
-
 };

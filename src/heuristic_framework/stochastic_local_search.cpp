@@ -1,11 +1,11 @@
 //
 // Created by knoblvit on 22.2.25.
 //
-#include "heuristic_framework/local_search.h"
+#include "heuristic_framework/stochastic_local_search.h"
 #include <cassert>
 #include <iostream>
 
-LocalSearch::LocalSearch(const std::shared_ptr<Callbacks> &callbacks,
+StochasticLocalSearch::StochasticLocalSearch(const std::shared_ptr<Callbacks> &callbacks,
                          const std::shared_ptr<Mutation> &mutation) {
   callbacks_ = callbacks;
   mutation_ = mutation;
@@ -13,7 +13,7 @@ LocalSearch::LocalSearch(const std::shared_ptr<Callbacks> &callbacks,
   assert(mutation != nullptr);
 }
 
-void LocalSearch::run(const std::shared_ptr<Individual> &initialSolution) {
+void StochasticLocalSearch::run(const std::shared_ptr<Individual> &initialSolution) {
   std::shared_ptr<Individual> solution = initialSolution->deepcopy();
   solution->evaluate();
   best_individual_ = solution->deepcopy();
@@ -38,7 +38,7 @@ void LocalSearch::run(const std::shared_ptr<Individual> &initialSolution) {
   }
 }
 
-bool LocalSearch::checkBetterSolution(
+bool StochasticLocalSearch::checkBetterSolution(
     const std::shared_ptr<Individual> &individual) {
   if(best_individual_ == nullptr || individual->betterThan(best_individual_)){
         best_individual_ = individual->deepcopy();
@@ -48,7 +48,7 @@ bool LocalSearch::checkBetterSolution(
   return false;
 }
 
-void LocalSearch::acceptOutsideSolution(
+void StochasticLocalSearch::acceptOutsideSolution(
     const std::shared_ptr<Individual> &individual) {
   std::lock_guard<std::recursive_mutex> lock(outside_solution_mutex_);
   if(outside_solution_ == nullptr || individual->betterThan(outside_solution_)){
@@ -56,7 +56,7 @@ void LocalSearch::acceptOutsideSolution(
   }
 }
 
-bool LocalSearch::checkOutsideSolution() {
+bool StochasticLocalSearch::checkOutsideSolution() {
   if(outside_solution_ == nullptr)
     return false;
   std::lock_guard<std::recursive_mutex> lock(outside_solution_mutex_);
@@ -64,7 +64,9 @@ bool LocalSearch::checkOutsideSolution() {
     return false;
   if(best_individual_ == nullptr || outside_solution_->betterThan(best_individual_)){
     best_individual_ = outside_solution_;
+    outside_solution_ = nullptr;
+    return true;
   }
   outside_solution_ = nullptr;
-  return true;
+  return false;
 }

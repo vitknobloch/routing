@@ -117,7 +117,7 @@ const std::vector<double> &CvrpIndividualStructured::getConstraintViolations() {
   return demand_violation_;
 }
 
-double CvrpIndividualStructured::getTotalConstraintViolation() { demand_violation_[0]; }
+double CvrpIndividualStructured::getTotalConstraintViolation() { return demand_violation_[0]; }
 
 bool CvrpIndividualStructured::isEvaluated() { return is_evaluated_; }
 
@@ -375,8 +375,8 @@ bool CvrpIndividualStructured::testExchangeMove(
   assert(segment1.route_idx < routes_.size() && segment2.route_idx < routes_.size());
   const auto &route1 = routes_[segment1.route_idx];
   const auto &route2 = routes_[segment2.route_idx];
-  assert(segment1.segment_start_idx < route1.customers.size() && segment1.segment_start_idx + segment1.segment_length <= route1.customers.size());
-  assert(segment2.segment_start_idx < route2.customers.size() && segment2.segment_start_idx + segment2.segment_length <= route2.customers.size());
+  assert(segment1.segment_start_idx <= route1.customers.size() && segment1.segment_start_idx + segment1.segment_length <= route1.customers.size());
+  assert(segment2.segment_start_idx <= route2.customers.size() && segment2.segment_start_idx + segment2.segment_length <= route2.customers.size());
   const uint demand1 = getSegmentDemand(segment1);
   const uint demand2 = getSegmentDemand(segment2);
 
@@ -427,4 +427,33 @@ bool CvrpIndividualStructured::testCrossMove(const CvrpRouteSegment &segment1,
   segment1_.segment_length = routes_[segment1.route_idx].customers.size() - segment1.segment_start_idx;
   segment2_.segment_length = routes_[segment2.route_idx].customers.size() - segment2.segment_start_idx;
   return testExchangeMove(segment1_, segment2_);
+}
+
+void CvrpIndividualStructured::smartInitialize() { initialize(); }
+
+std::shared_ptr<Solution> CvrpIndividualStructured::convertSolution() {
+  evaluate();
+  auto solution = std::make_shared<Solution>();
+  solution->travel_time_sum = total_time_;
+  solution->end_time_sum = total_time_ + (instance_->getNodesCount() - 1) * 1;
+  solution->objective = solution->travel_time_sum;
+
+  SolutionNode first_node(0, 0, 0);
+
+  for(const auto &route: routes_){
+    solution->routes.emplace_back();
+    auto &sol_route = solution->routes.back();
+    sol_route.demand = route.demand;
+    sol_route.travel_time = route.time;
+    sol_route.end_time = route.time + route.customers.size() * 1;
+    sol_route.route_nodes.push_back(first_node);
+
+    for(uint i = 0; i < route.customers.size(); i++){
+      const auto &customer = route.customers[i];
+      sol_route.route_nodes.emplace_back(customer.idx, customer.time_up_to + i, customer.time_up_to + i + 1);
+    }
+    sol_route.route_nodes.emplace_back(0, sol_route.end_time, sol_route.end_time);
+  }
+
+  return solution;
 }

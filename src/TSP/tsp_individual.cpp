@@ -52,6 +52,7 @@ void TspIndividual::initializeNearestNeighbor(){
   }
 
   assert(data_.size() == (uint)N);
+  resetEvaluated();
 }
 
 std::vector<uint> &TspIndividual::data() {
@@ -163,4 +164,8 @@ TspIndividual::TspIndividual(const RoutingInstance *const instance,
       break;
   }
   setFitness(solution->objective);
+}
+
+void TspIndividual::smartInitialize() {
+  initializeNearestNeighbor();
 }

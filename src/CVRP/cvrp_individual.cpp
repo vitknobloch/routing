@@ -14,10 +14,12 @@ instance_(other.instance_), matrix_(other.matrix_), data_(other.data_), is_evalu
   fitness_(other.fitness_), capacity_constraint_violation_(other.capacity_constraint_violation_){}
 
 void CvrpIndividual::initialize() {
+  data_.clear();
   data_.reserve(instance_->getNodesCount() + instance_->getVehicleCount() - 1);
   for(int i = 0; i < instance_->getNodesCount() + instance_->getVehicleCount() - 1; i++){
     data_.push_back(i);
   }
+  resetEvaluated();
 }
 
 std::vector<uint> &CvrpIndividual::data() { return data_; }
@@ -236,4 +238,8 @@ std::shared_ptr<Solution> CvrpIndividual::convertSolution() {
   solution->feasible = getTotalConstraintViolation() == 0;
 
   return solution;
+}
+
+void CvrpIndividual::smartInitialize() {
+  initialize();
 }

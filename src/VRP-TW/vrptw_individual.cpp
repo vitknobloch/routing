@@ -51,10 +51,12 @@ VrptwIndividual::VrptwIndividual(const RoutingInstance *const instance,
 }
 
 void VrptwIndividual::initialize() {
+  data_.clear();
   data_.reserve(instance_->getNodesCount() + instance_->getVehicleCount() - 1);
   for(int i = 0; i < instance_->getNodesCount() + instance_->getVehicleCount() - 1; i++){
     data_.push_back(i);
   }
+  resetEvaluated();
 }
 
 std::vector<uint> &VrptwIndividual::data() { return data_; }
@@ -250,4 +252,8 @@ std::shared_ptr<Solution> VrptwIndividual::convertSolution() {
   solution->objective = solution->end_time_sum;
 
   return solution;
+}
+
+void VrptwIndividual::smartInitialize() {
+  initialize();
 }

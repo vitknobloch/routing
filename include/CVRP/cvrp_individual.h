@@ -31,6 +31,7 @@ public:
   bool betterThan(const std::shared_ptr<Individual> &other) override;
   void calculateFitness() override;
   void evaluate() override;
+  void smartInitialize() override;
   std::shared_ptr<Individual> deepcopy() override;
   double getFitness() override;
   bool isEvaluated() override;

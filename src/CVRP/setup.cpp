@@ -4,9 +4,11 @@
 #include "CVRP//setup.h"
 #include <iostream>
 
-#include "CVRP/cvrp_local_search.h"
+#include "CVRP/cvrp_exhaustive_local_search.h"
 #include "CVRP/cvrp_mutation_random.h"
+#include "CVRP/cvrp_neighborhood.h"
 #include "CVRP/cvrp_pmx_crossover.h"
+#include "CVRP/cvrp_stochastic_local_search.h"
 #include "CVRP/cvrp_stochastic_ranking.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
@@ -26,9 +28,14 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
     auto heur_config = config[h];
     if(!heur_config.contains("type"))
       std::cerr << "Heuristic config doesn't contain type." << std::endl;
-    if(heur_config["type"] == "local_search"){
+    if(heur_config["type"] == "stochastic_local_search"){
       auto mutation = std::make_shared<CvrpMutationRandom>(instance);
-      auto localSearch = std::make_shared<CvrpLocalSearch>(instance, mutation);
+      auto localSearch = std::make_shared<CvrpStochasticLocalSearch>(instance, mutation);
+      portfolio->addImprovingHeuristic(localSearch);
+    }
+    else if(heur_config["type"] == "exhaustive_local_search"){
+      auto neighborhood = std::make_shared<CvrpNeighborhood>();
+      auto localSearch = std::make_shared<CvrpExhaustiveLocalSearch>(instance, neighborhood);
       portfolio->addImprovingHeuristic(localSearch);
     }
     else if(heur_config["type"] == "stochastic_ranking"){

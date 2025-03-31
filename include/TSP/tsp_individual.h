@@ -26,6 +26,7 @@ public:
   TspIndividual(const TspIndividual &other);
   void initialize() override;
   void initializeNearestNeighbor();
+  void smartInitialize() override;
   std::vector<uint> &data();
   void resetEvaluated() override;
   void setFitness(double fitness);

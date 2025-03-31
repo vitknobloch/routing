@@ -6,7 +6,7 @@
 
 #include "TSP/tsp_individual.h"
 #include "common/heuristic.h"
-#include "heuristic_framework/local_search.h"
+#include "heuristic_framework/stochastic_local_search.h"
 #include <atomic>
 
 class TspLocalSearch : public Heuristic{
@@ -18,7 +18,7 @@ private:
   std::atomic<bool> terminate_;
   std::shared_ptr<Mutation> mutation_;
   std::recursive_mutex solution_mutex_;
-  std::shared_ptr<LocalSearch> local_search_;
+  std::shared_ptr<StochasticLocalSearch> local_search_;
 
   void sendSolution(const std::shared_ptr<Solution>& solution);
   bool checkBetterSolution(const std::shared_ptr<Solution> &solution);

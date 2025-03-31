@@ -18,14 +18,6 @@
             "mutation": "random"
         },
         {
-            "type": "local_search",
-            "mutation": "random"
-        },
-        {
-            "type": "local_search",
-            "mutation": "random"
-        },
-        {
             "type": "stochastic_ranking"
         },
         {
@@ -38,10 +30,20 @@
             "type": "stochastic_ranking"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "exhaustive_local_search",
+            "neighborhood": "paper_guided_LS_VRPTW"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "exhaustive_local_search",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        },
+        {
+            "type": "exhaustive_local_search",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        },
+        {
+            "type": "exhaustive_local_search",
+            "neighborhood": "paper_guided_LS_VRPTW"
         }
     ],
     "optal": {

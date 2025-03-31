@@ -1,12 +1,12 @@
 //
 // Created by knoblvit on 24.2.25.
 //
-#include "CVRP/cvrp_local_search.h"
+#include "CVRP/cvrp_stochastic_local_search.h"
 #include <cassert>
 #include <iostream>
 #include <random>
 
-CvrpLocalSearch::CvrpLocalSearch(
+CvrpStochasticLocalSearch::CvrpStochasticLocalSearch(
     const std::shared_ptr<RoutingInstance> &instance,
     const std::shared_ptr<Mutation> &mutation) {
   instance_ = instance;
@@ -17,14 +17,14 @@ CvrpLocalSearch::CvrpLocalSearch(
   mutation_ = mutation;
 }
 
-void CvrpLocalSearch::sendSolution(
+void CvrpStochasticLocalSearch::sendSolution(
     const std::shared_ptr<Solution> &solution) {
   if(solution == nullptr || portfolio_ == nullptr)
     return;
   portfolio_->acceptSolution(solution);
 }
 
-void CvrpLocalSearch::initialize(HeuristicPortfolio *portfolio) {
+void CvrpStochasticLocalSearch::initialize(HeuristicPortfolio *portfolio) {
   portfolio_ = portfolio;
   terminate_ = false;
   std::shared_ptr<Callbacks> callbacks = std::make_shared<Callbacks>();
@@ -37,21 +37,21 @@ void CvrpLocalSearch::initialize(HeuristicPortfolio *portfolio) {
     //std::cerr << solution->objective << " " << individual->getTotalConstraintViolation() << std::endl;
     sendSolution(solution);
   });
-  local_search_ = std::make_shared<LocalSearch>(callbacks, mutation_);
+  local_search_ = std::make_shared<StochasticLocalSearch>(callbacks, mutation_);
 }
 
-void CvrpLocalSearch::terminate() {
+void CvrpStochasticLocalSearch::terminate() {
   terminate_.store(true);
 }
 
-void CvrpLocalSearch::acceptSolution(std::shared_ptr<Solution> solution) {
+void CvrpStochasticLocalSearch::acceptSolution(std::shared_ptr<Solution> solution) {
   if(checkBetterSolution(solution)){
     auto individual= std::make_shared<CvrpIndividual>(instance_.get(), solution);
     local_search_->acceptOutsideSolution(individual);
   }
 }
 
-bool CvrpLocalSearch::checkBetterSolution(
+bool CvrpStochasticLocalSearch::checkBetterSolution(
     const std::shared_ptr<Solution> &solution) {
   if(solution->objective < 0) { // integer overflow
     std::cerr << "Integer overflow encountered in CVRP local search solution value" << std::endl;
@@ -65,7 +65,7 @@ bool CvrpLocalSearch::checkBetterSolution(
   return false;
 }
 
-void CvrpLocalSearch::run(){
+void CvrpStochasticLocalSearch::run(){
   std::random_device rand;
   std::mt19937 gen(rand());
   auto initialSolution = std::make_shared<CvrpIndividual>(instance_.get());

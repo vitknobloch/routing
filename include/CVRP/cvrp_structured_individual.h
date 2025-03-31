@@ -71,7 +71,9 @@ public:
   explicit CvrpIndividualStructured(const RoutingInstance * const instance);
   explicit CvrpIndividualStructured(const RoutingInstance * const instance, const std::shared_ptr<Solution> &solution);
   CvrpIndividualStructured(const CvrpIndividualStructured &cpy);
+  std::shared_ptr<Solution> convertSolution();
   void initialize() override;
+  void smartInitialize() override;
   void resetEvaluated() override;
   bool betterThan(const std::shared_ptr<Individual> &other) override;
   double getFitness() override;

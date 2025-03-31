@@ -29,13 +29,14 @@ set(COMMON
 
 set(HEURISTIC_FRAMEWORK
     src/heuristic_framework/callbacks.cpp
-        src/heuristic_framework/local_search.cpp
+        src/heuristic_framework/stochastic_local_search.cpp
         src/heuristic_framework/population.cpp
         src/heuristic_framework/tournament_selection.cpp
         src/heuristic_framework/truncation_replacement.cpp
         src/heuristic_framework/genetic_algorithm.cpp
         src/heuristic_framework/population_stochastic_ranking.cpp
         src/heuristic_framework/stochastic_ranking.cpp
+        src/heuristic_framework/exhaustive_local_search.cpp
 )
 
 set(TSP
@@ -51,10 +52,12 @@ set(CVRP
     src/CVRP/setup.cpp
         src/CVRP/cvrp_individual.cpp
         src/CVRP/cvrp_structured_individual.cpp
-        src/CVRP/cvrp_local_search.cpp
+        src/CVRP/cvrp_stochastic_local_search.cpp
         src/CVRP/cvrp_mutation_random.cpp
         src/CVRP/cvrp_stochastic_ranking.cpp
         src/CVRP/cvrp_pmx_crossover.cpp
+        src/CVRP/cvrp_neighborhood.cpp
+        src/CVRP/cvrp_exhaustive_local_search.cpp
 )
 
 set(VRP-TW
@@ -69,7 +72,7 @@ add_executable(Heuristic
         ${HEURISTIC_FRAMEWORK}
         ${TSP}
         ${CVRP}
-        ${VRP-TW}
+        #${VRP-TW}
 )
 
 target_link_libraries(Heuristic PRIVATE nlohmann_json::nlohmann_json)
