@@ -51,8 +51,9 @@ void CvrpIndividualStructured::initialize() {
   // randomly shuffle customers
   std::random_device rand;
   std::mt19937 gen(rand());
-  std::vector<uint> customers(instance_->getNodesCount() - 1);
-  for(int i = 0; i < instance_->getNodesCount(); i++){
+  const uint nodes_count = instance_->getNodesCount();
+  std::vector<uint> customers(nodes_count - 1, 0);
+  for(int i = 0; i < customers.size(); i++){
     customers[i] = i+1;
   }
   std::shuffle(customers.begin(), customers.end(), gen);

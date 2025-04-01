@@ -24,6 +24,7 @@ void RoutingInstance::loadTSPlibInstance(const char *filename) {
   }
 
   TSPlibLoader::loadHeader(*this, file);
+  assert(nodes_.size() == node_count_);
   uint sum_demands = 0;
   for(const auto &node : nodes_){
     sum_demands += node.demand;
