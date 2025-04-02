@@ -273,7 +273,8 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
     }
 
 
-    model.minimize(model.sum(endTimes));
+    let total_service_time = instance.service_times.reduce((a, b) => a + b, 0)
+    model.minimize(model.sum(endTimes).minus(total_service_time));
 
 
     return [model, { visits, lasts }];
