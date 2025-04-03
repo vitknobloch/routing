@@ -274,16 +274,270 @@ bool VrptwIndividualStructured::test2optMove(const VrptwRouteSegment &segment) {
     old_time_violation += std::max(0, (int)customers[c].time_up_to - nodes[customers[c].idx].due_date);
   }
 
+  // no positive time-shift after and lower time-violation
   if(time <= old_time_after && time_violation <= old_time_violation)
     return true;
-  uint shift = time - old_time_after;
-  uint c = end_idx + 1;
-  while(c < customers.size() && shift > 0){
-    if(customers[c].time_up_to + shift > (uint)nodes[customers[c].idx].due_date){
-      time_violation += customers[c].time_up_to + shift - (uint)nodes[customers[c].idx].due_date;
+
+  // find out complete time-violation in case of positive time-shift after
+  for(uint c = end_idx + 1; c < customers.size(); c++){
+    time = std::max(time, (uint)nodes[customers[c].idx].ready_time);
+    if(time <= customers[c].time_up_to) // no further positive-time shift
+      break;
+    if(time > (uint)nodes[customers[c].idx].due_date){
+      time_violation += time - (uint)nodes[customers[c].idx].due_date;
       old_time_violation += std::max(0, (int)customers[c].time_up_to - nodes[customers[c].idx].due_date);
     }
-    //TODO: change shift if the customer is visited before ready_time
+    time += nodes[customers[c].idx].service_time;
+    const uint next_node = c == customers.size() - 1 ? 0 : customers[c+1].idx;
+    time += instance_->getDistance(customers[c].idx, next_node);
   }
 
+  return time_violation <= old_time_violation;
+}
+
+void VrptwIndividualStructured::perform2optMove(
+    const VrptwRouteSegment &segment) {
+  if(segment.segment_length < 2)
+    return;
+  assert(segment.route_idx < routes_.size());
+  auto &route = routes_[segment.route_idx];
+  assert(segment.segment_start_idx < route.customers.size());
+  assert(segment.segment_start_idx + segment.segment_length <= route.customers.size());
+
+  uint left = segment.segment_start_idx;
+  uint right = segment.segment_start_idx + segment.segment_length - 1;
+  while(left < right){
+    std::swap(route.customers[left].idx, route.customers[right].idx);
+    left++;
+    right--;
+  }
+
+  const uint prev_time = route.time;
+  const uint prev_travel_time = route.travel_time;
+  const uint prev_time_violation = route.time_violation;
+  evaluateRoute(segment.route_idx);
+
+  total_time_ += route.time - prev_time;
+  total_travel_time_ += route.travel_time - prev_travel_time;
+  timeViolation() += route.time_violation - prev_time_violation;
+}
+
+VrptwIndividualRoute VrptwIndividualStructured::insertSegment(
+    const VrptwIndividualRoute &to_route,
+    const VrptwIndividualRoute &from_route,
+    const VrptwRouteSegment &remove_segment,
+    const VrptwRouteSegment &insert_segment) {
+  const auto &nodes = instance_->getNodes();
+  VrptwIndividualRoute new_route;
+  new_route.customers.reserve(to_route.customers.size() - remove_segment.segment_length + insert_segment.segment_length);
+  new_route.time = 0;
+  new_route.travel_time = 0;
+  new_route.time_violation = 0;
+  new_route.demand = 0;
+  uint prev_node = 0;
+  // Insert nodes before removed segment
+  for(uint i = 0; i < (uint)remove_segment.segment_start_idx; i++){
+    new_route.customers.push_back(to_route.customers[i]);
+    new_route.time_violation += std::max(0, (int)to_route.customers[i].time_up_to - nodes[to_route.customers[i].idx].due_date);
+  }
+  if(!new_route.customers.empty()){
+    const auto &prev_customer = new_route.customers.back();
+    new_route.time = prev_customer.time_up_to + nodes[prev_customer.idx].service_time;
+    new_route.travel_time = prev_customer.travel_time_up_to;
+    new_route.demand = prev_customer.demand_up_to;
+    prev_node = prev_customer.idx;
+  }
+
+  // Insert nodes from removed segment
+  for(uint i = insert_segment.segment_start_idx; i < insert_segment.segment_start_idx + insert_segment.segment_length; i++){
+    const uint cur_node = from_route.customers[i].idx;
+    new_route.time += instance_->getDistance(prev_node, cur_node);
+    new_route.travel_time += instance_->getDistance(prev_node, cur_node);
+    if(new_route.time > (uint)nodes[cur_node].due_date)
+      new_route.time_violation += new_route.time - (uint)nodes[cur_node].due_date;
+    new_route.demand += nodes[cur_node].demand;
+    new_route.time = std::max(new_route.time, (uint)nodes[cur_node].ready_time);
+    new_route.customers.emplace_back(cur_node, new_route.travel_time, new_route.time,
+                                     new_route.demand);
+    prev_node = cur_node;
+  }
+
+  // Insert nodes after removed segment
+  for(uint i = remove_segment.segment_start_idx + remove_segment.segment_length; i < to_route.customers.size(); i++){
+    const uint cur_node = from_route.customers[i].idx;
+    new_route.time += instance_->getDistance(prev_node, cur_node);
+    new_route.travel_time += instance_->getDistance(prev_node, cur_node);
+    if(new_route.time > (uint)nodes[cur_node].due_date)
+      new_route.time_violation += new_route.time - (uint)nodes[cur_node].due_date;
+    new_route.demand += nodes[cur_node].demand;
+    new_route.time = std::max(new_route.time, (uint)nodes[cur_node].ready_time);
+    new_route.customers.emplace_back(cur_node, new_route.travel_time, new_route.time,
+                                     new_route.demand);
+    prev_node = cur_node;
+  }
+  new_route.travel_time += instance_->getDistance(prev_node, 0);
+  new_route.time += instance_->getDistance(prev_node, 0);
+  return new_route;
+}
+
+void VrptwIndividualStructured::exchange_route(
+    const uint &route_idx, const VrptwIndividualRoute &new_route) {
+  const auto &old_route = routes_[route_idx];
+
+  total_time_ += new_route.time - old_route.time;
+  total_travel_time_ += new_route.travel_time - old_route.travel_time;
+  const auto &capacity = instance_->getVehicleCapacity();
+  capacityViolation() += std::max(0, (int)new_route.demand - capacity) - std::max(0, (int)old_route.demand - capacity);
+  timeViolation() += new_route.time_violation - old_route.time_violation;
+
+  routes_[route_idx] = new_route;
+}
+
+void VrptwIndividualStructured::performExchangeMove(
+    const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2) {
+  assert(segment1.route_idx < routes_.size() && segment2.route_idx < routes_.size());
+  const auto &route1 = routes_[segment1.route_idx];
+  const auto &route2 = routes_[segment2.route_idx];
+
+  assert(segment1.segment_start_idx < route1.customers.size() && segment1.segment_start_idx + segment1.segment_length <= route1.customers.size());
+  assert(segment2.segment_start_idx < route2.customers.size() && segment2.segment_start_idx + segment2.segment_length <= route2.customers.size());
+
+  auto new_route1 = insertSegment(route1, route2, segment1, segment2);
+  auto new_route2 = insertSegment(route2, route1, segment2, segment1);
+
+  exchange_route(segment1.route_idx, new_route1);
+  exchange_route(segment2.route_idx, new_route2);
+}
+
+void VrptwIndividualStructured::performRelocateMove(
+    const VrptwRouteSegment &segment_moved,
+    const VrptwRouteSegment &target_pos) {
+  assert(segment_moved.route_idx < routes_.size() && target_pos.route_idx < routes_.size());
+  const auto &route_from = routes_[segment_moved.route_idx];
+  const auto &route_to = routes_[target_pos.route_idx];
+
+  assert(segment_moved.segment_start_idx < route_from.customers.size() && segment_moved.segment_start_idx + segment_moved.segment_length <= route_from.customers.size());
+  assert(target_pos.segment_start_idx <= route_to.customers.size());
+  assert(target_pos.segment_length == 0);
+
+  auto new_route_from = insertSegment(route_from, route_to, segment_moved, target_pos);
+  auto new_route_to = insertSegment(route_to, route_from, target_pos, segment_moved);
+
+  exchange_route(segment_moved.route_idx, new_route_from);
+  exchange_route(target_pos.route_idx, new_route_to);
+}
+
+void VrptwIndividualStructured::performCrossMove(
+    const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2) {
+  assert(segment1.route_idx < routes_.size() && segment2.route_idx < routes_.size());
+  const auto &route1 = routes_[segment1.route_idx];
+  const auto &route2 = routes_[segment2.route_idx];
+
+  assert(segment1.segment_start_idx <= route1.customers.size());
+  assert(segment2.segment_start_idx <= route2.customers.size());
+
+  VrptwRouteSegment segment1_ = segment1;
+  VrptwRouteSegment segment2_ = segment2;
+  segment1_.segment_length = route1.customers.size() - segment1.segment_start_idx;
+  segment2_.segment_length = route2.customers.size() - segment2.segment_start_idx;
+  auto new_route1 = insertSegment(route1, route2, segment1_, segment2_);
+  auto new_route2 = insertSegment(route2, route1, segment2_, segment1_);
+
+  exchange_route(segment1.route_idx, new_route1);
+  exchange_route(segment2.route_idx, new_route2);
+}
+
+bool VrptwIndividualStructured::testExchangeMove(
+    const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2) {
+  assert(segment1.route_idx != segment2.route_idx);
+  assert(segment1.route_idx < routes_.size() && segment2.route_idx < routes_.size());
+  const auto &route1 = routes_[segment1.route_idx];
+  const auto &route2 = routes_[segment2.route_idx];
+  assert(segment1.segment_start_idx <= route1.customers.size() && segment1.segment_start_idx + segment1.segment_length <= route1.customers.size());
+  assert(segment2.segment_start_idx <= route2.customers.size() && segment2.segment_start_idx + segment2.segment_length <= route2.customers.size());
+  const uint demand1 = getSegmentDemand(segment1);
+  const uint demand2 = getSegmentDemand(segment2);
+
+  const auto &capacity = instance_->getVehicleCapacity();
+  const int demand_violation_old = std::max(0, (int)route1.demand - capacity) +
+                                   std::max(0, (int)route2.demand - capacity);
+
+  const int demand_violation_new = std::max(0, (int)route1.demand + (int)demand2 - (int)demand1 - capacity) +
+                                   std::max(0, (int)route2.demand + (int)demand1 - (int)demand2 - capacity);
+
+  const int time_violation_old = (int)route1.time_violation + (int)route2.time_violation;
+
+  if(demand_violation_new > demand_violation_old + time_violation_old)
+    return false; // surely worsens total constraints violation
+
+  const uint travel_time_old = route1.time + route2.time;
+  const uint travel_time_new = getExchangeTravelTime(segment1, segment2) + getExchangeTravelTime(segment2, segment1);
+
+  if(travel_time_new >= travel_time_old && demand_violation_old == 0 && time_violation_old == 0)
+    return false; // worsens travel time and violation was already zero
+
+  //TODO: Calculate new and old time violation for both routes and decide wheter it will improve after exchange
+
+}
+
+uint VrptwIndividualStructured::getSegmentTravelTime(
+    const VrptwRouteSegment &segment) {
+  if(segment.segment_length == 0)
+    return 0;
+  auto start_time = routes_[segment.route_idx].customers[segment.segment_start_idx].travel_time_up_to;
+  auto end_time = routes_[segment.route_idx].customers[segment.segment_start_idx + segment.segment_length - 1].travel_time_up_to;
+  return end_time - start_time;
+}
+uint VrptwIndividualStructured::getSegmentDemand(
+    const VrptwRouteSegment &segment) {
+  if(segment.segment_length == 0)
+    return 0;
+  auto demand_before = segment.segment_start_idx == 0 ? 0 : routes_[segment.route_idx].customers[segment.segment_start_idx - 1].demand_up_to;
+  auto demand_after = routes_[segment.route_idx].customers[segment.segment_start_idx + segment.segment_length - 1].demand_up_to;
+  return demand_after - demand_before;
+}
+
+uint VrptwIndividualStructured::getExchangeTravelTime(
+    const VrptwRouteSegment &remove_segment,
+    const VrptwRouteSegment &insert_segment) {
+  const auto &cust_to = routes_[remove_segment.route_idx].customers;
+  const auto &cust_from = routes_[insert_segment.route_idx].customers;
+  uint prev_node = 0;
+  uint prev_time = 0;
+  if(remove_segment.segment_start_idx > 0){
+    prev_node = cust_to[remove_segment.segment_start_idx - 1].idx;
+    prev_time = cust_to[remove_segment.segment_start_idx - 1].travel_time_up_to;
+  }
+  uint next_node = 0;
+  uint after_time = 0;
+  const uint after_idx = remove_segment.segment_start_idx + remove_segment.segment_length;
+  if(after_idx < cust_to.size()){
+    next_node = cust_to[after_idx].idx;
+    after_time = routes_[remove_segment.route_idx].travel_time - cust_to[after_idx].travel_time_up_to;
+  }
+
+  if(insert_segment.segment_length == 0){
+    return prev_time + instance_->getDistance(prev_node, next_node) + after_time;
+  }
+  const uint first_node = cust_from[insert_segment.segment_start_idx].idx;
+  const uint last_node = cust_from[insert_segment.segment_start_idx +
+                                   insert_segment.segment_length - 1].idx;
+
+  return prev_time + instance_->getDistance(prev_node, first_node) + getSegmentTravelTime(insert_segment) + instance_->getDistance(last_node, next_node) + after_time;
+}
+
+uint VrptwIndividualStructured::getArrivalTime(
+    const VrptwIndividualRoute &route, const uint &customer_idx) {
+  assert(customer_idx < route.customers.size());
+  if(customer_idx == 0)
+    return instance_->getDistance(0, route.customers[customer_idx].idx);
+
+  const auto &nodes = instance_->getNodes();
+  const auto &prev_customer = route.customers[customer_idx - 1];
+  return prev_customer.time_up_to + nodes[prev_customer.idx].service_time + instance_->getDistance(prev_customer.idx, route.customers[customer_idx].idx);
+}
+uint VrptwIndividualStructured::getEndTime(const VrptwIndividualRoute &route,
+                                           const uint &customer_idx) {
+  assert(customer_idx < route.customers.size());
+  return route.customers[customer_idx].time_up_to + instance_->getNodes()[route.customers[customer_idx].idx].service_time;
 }

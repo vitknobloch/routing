@@ -68,12 +68,17 @@ private:
   VrptwIndividualRoute insertSegment(const VrptwIndividualRoute &to_route, const VrptwIndividualRoute &from_route, const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
   /** Exchanges route on the given index with the new route and performs necessary changes to fitness and demand violation */
   void exchange_route(const uint &route_idx, const VrptwIndividualRoute &new_route);
-  /** Returns travel time of the segment (excluding time to move from/to segment) */
+  /** Returns time of the segment (excluding time to move from/to segment) */
   uint getSegmentTime(const VrptwRouteSegment &segment);
+  /** Returns travel time of the segment (excluding time to move from/to segment) */
+  uint getSegmentTravelTime(const VrptwRouteSegment &segment);
   /** Returns demand of the route segment*/
   uint getSegmentDemand(const VrptwRouteSegment &segment);
   /** Returns the time it takes to complete the route after replacing remove segment by insert segment */
-  uint getExchangeTime(const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
+  uint getExchangeTravelTime(const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
+
+  uint getArrivalTime(const VrptwIndividualRoute &route, const uint &customer_idx);
+  uint getEndTime(const VrptwIndividualRoute &route, const uint &customer_idx);
 
   void evaluateRoute(uint route_idx);
   inline double& capacityViolation() {return violations_[0];}
@@ -108,16 +113,12 @@ public:
   /** Exchange the ends of the given routes, starting from given start_idx (customers.size() for insertion of other segment at the end) */
   void performCrossMove(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
 
-  /** Returns true if the 2-opt move will make fitness better
-   * (Constant time but still quite demanding) */
+  /** Returns true if the 2-opt move will make fitness better */
   bool test2optMove(const VrptwRouteSegment &segment);
-  /** Returns true if the exchange move will make fitness better
-   * (Constant time but still quite demanding) */
+  /** Returns true if the exchange move will make fitness better */
   bool testExchangeMove(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
-  /** Returns true if the relocate move will make fitness better
-   * (Constant time but still quite demanding) */
+  /** Returns true if the relocate move will make fitness better */
   bool testRelocateMove(const VrptwRouteSegment &segment_moved, const VrptwRouteSegment &target_pos);
-  /** Returns true if the cross move will make fitness better
-   * (Constant time but still quite demanding) */
+  /** Returns true if the cross move will make fitness better */
   bool testCrossMove(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
 };
