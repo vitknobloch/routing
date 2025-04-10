@@ -4,7 +4,7 @@
 
 #include "CVRP/setup.h"
 #include "TSP/setup.h"
-// #include "VRP-TW/setup.h"
+#include "VRP-TW/setup.h"
 #include "common/portfolio.h"
 #include "json.hpp"
 #include "common/logger.h"
@@ -77,10 +77,8 @@ int main(int argc, char *argv[])
   }
   else if (config_json["problem"] == "VRP-TW")
   {
-    // auto setup = SetupVRPTW();
-    // portfolio = setup.preparePortfolio(config_json["heuristics"], instance_filename);
-    std::cerr << "VRP-TW not implemented yet" << std::endl;
-    exit(100);
+    auto setup = SetupVRPTW();
+    portfolio = setup.preparePortfolio(config_json["heuristics"], instance_filename);
   }
   else
   {

@@ -3,6 +3,7 @@
 //
 #include "heuristic_framework/exhaustive_local_search.h"
 #include <cassert>
+#include <iostream>
 
 ExhaustiveLocalSearch::ExhaustiveLocalSearch(
     const std::shared_ptr<Callbacks> &callbacks,
@@ -31,6 +32,7 @@ void ExhaustiveLocalSearch::run(
       // nothing to do
     }else if(result == Neighborhood::SearchResult::EXHAUSTED){
       // restart search
+      std::cerr << "Restarted search" << std::endl;
       neighborhood_->reset(solution);
       solution->smartInitialize();
       solution->evaluate();

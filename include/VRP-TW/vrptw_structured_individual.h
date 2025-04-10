@@ -61,6 +61,7 @@ private:
   std::vector<VrptwIndividualRoute> routes_;
   uint total_time_;
   uint total_travel_time_;
+  uint vehicles_used_;
   std::vector<double> violations_; //0 - demand, 1 - time
   bool is_evaluated_;
 
@@ -68,8 +69,6 @@ private:
   VrptwIndividualRoute insertSegment(const VrptwIndividualRoute &to_route, const VrptwIndividualRoute &from_route, const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
   /** Exchanges route on the given index with the new route and performs necessary changes to fitness and demand violation */
   void exchange_route(const uint &route_idx, const VrptwIndividualRoute &new_route);
-  /** Returns time of the segment (excluding time to move from/to segment) */
-  uint getSegmentTime(const VrptwRouteSegment &segment);
   /** Returns travel time of the segment (excluding time to move from/to segment) */
   uint getSegmentTravelTime(const VrptwRouteSegment &segment);
   /** Returns demand of the route segment*/
@@ -77,12 +76,23 @@ private:
   /** Returns the time it takes to complete the route after replacing remove segment by insert segment */
   uint getExchangeTravelTime(const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
 
+  bool exchangeViolatesTimeConstraints(const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
+  int exchangeTimeViolationChange(const VrptwRouteSegment &remove_segment, const VrptwRouteSegment &insert_segment);
+
+  bool test2optMoveNoViolations(const VrptwRouteSegment &segment);
+  bool test2optMoveViolation(const VrptwRouteSegment &segment);
+
+  bool testExchangeMoveNoViolation(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
+  bool testExchangeMoveViolation(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
+
   uint getArrivalTime(const VrptwIndividualRoute &route, const uint &customer_idx);
-  uint getEndTime(const VrptwIndividualRoute &route, const uint &customer_idx);
+  uint getEndTime(const VrptwIndividualRoute &route, const int &customer_idx);
 
   void evaluateRoute(uint route_idx);
   inline double& capacityViolation() {return violations_[0];}
   inline double& timeViolation() {return violations_[1];}
+
+  bool assertEvaluation(const VrptwIndividualRoute &route);
 
 public:
   explicit VrptwIndividualStructured(const RoutingInstance * const instance);

@@ -65,6 +65,8 @@ set(VRP-TW
         #src/VRP-TW/vrptw_individual.cpp
         #src/VRP-TW/vrptw_mutation_random.cpp
         src/VRP-TW/vrptw_structured_individual.cpp
+        src/VRP-TW/vrptw_neighborhood.cpp
+        src/VRP-TW/vrptw_exhaustive_local_search.cpp
 )
 
 add_executable(Heuristic
