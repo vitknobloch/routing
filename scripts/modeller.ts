@@ -12,6 +12,8 @@ export type CvrpVars = {
     lasts: CP.IntervalVar[],
 }
 
+export let bigM = 1_000_000;
+
 export function defineModelTSP(instance: ParseResult, filename: string, visit_duration: number): [CP.Model, TspVars] {
     let model = new CP.Model(makeModelName('tsp', filename));
     let visits = Array.from({ length: instance.nbNodes }, (_, i) => model.intervalVar({ length: visit_duration, name: `N_${i}` }));
@@ -190,10 +192,16 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
     // Usage of each vehicle (how much capacity is used):
     let vehicleUsage: CP.IntExpr[] = [];
 
+    let vehicleUsed: CP.IntExpr[] = [];
+
     for (let v = 0; v < instance.nbVehicles; v++) {
         // Visits done by the vehicle v:
         let myVisits = Array.from({ length: nbCustomers }, (_, i) =>
-            model.intervalVar({ length: instance.service_times![i + 1], name: `V_${v + 1}_${i + 2}`, optional: true })
+            model.intervalVar({
+                length: instance.service_times![i + 1],
+                name: `V_${v + 1}_${i + 2}`,
+                optional: true
+            })
         );
         // Add myVisits to the visits array:
         for (let i = 0; i < nbCustomers; i++)
@@ -204,11 +212,16 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
 
         // Constraints for the depot:
         let last = model.intervalVar({ length: 0, name: `last_${v + 1}`, end: [0, horizon] });
+
         for (let i = 0; i < nbCustomers; i++) {
             // We don't model the initial depot visit at all. It is known to be at time 0.
             // Instead, we increase startMin of all the visits by the transition matrix value:
-            myVisits[i].setStartMin(Math.max(instance.transitionMatrix[0][i + 1], instance.ready_times![i + 1]));
+            myVisits[i].setStartMin(instance.transitionMatrix[0][i + 1]);
             myVisits[i].setStartMax(instance.due_times![i + 1]);
+            myVisits[i].setEndMin(Math.max(instance.transitionMatrix[0][i + 1], instance.ready_times![i + 1]) + instance.service_times![i + 1]);
+            myVisits[i].setEndMax(instance.due_times![i + 1] + instance.service_times![i + 1]);
+            myVisits[i].setLengthMax(CP.LengthMax);
+            assert(myVisits[i].getLengthMin() == instance.service_times![i + 1], "Service time is not set correctly");
             // The return to depot must be after all the other visits and respect the transition matrix:
             model.endBeforeStart(myVisits[i], last, instance.transitionMatrix[i + 1][0]);
         }
@@ -217,8 +230,11 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
 
         // Capacity of the vehicle cannot be exceeded:
         let used = model.sum(myVisits.map((itv, i) => itv.presence().times(instance.demands![i + 1])));
+        let used_bool = model.max(myVisits.map(itv => itv.presence()));
+
         model.constraint(used.le(instance.capacity));
         vehicleUsage.push(used);
+        vehicleUsed.push(used_bool);
 
         // Compute the max index of a served customer as:
         //    min_i { (i+1) * myVisits[i].presence() }
@@ -272,7 +288,15 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
         }
     }
 
-    model.minimize(model.sum(endTimes));
+    // Compute how much time we spent by the visits (including the waiting time).
+    // To get a bit more propagation, for each visit compute the max length over
+    // its alternatives (different vehicles).
+    let visitDurations: CP.IntExpr[] = [];
+    for (let i = 0; i < nbCustomers; i++)
+        visitDurations.push(model.max(visits[i].map(visit => visit.length())));
+    let objective = model.sum(endTimes).minus(model.sum(visitDurations)).plus(model.sum(vehicleUsed).times(bigM));
+    model.constraint(objective.ge(model.sum(vehicleUsed).times(bigM)));
+    model.minimize(objective);
 
 
     return [model, { visits, lasts }];

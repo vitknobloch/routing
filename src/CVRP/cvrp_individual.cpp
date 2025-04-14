@@ -234,6 +234,7 @@ std::shared_ptr<Solution> CvrpIndividual::convertSolution() {
   solution->end_time_sum += time;
   solution->travel_time_sum += travel_time;
   solution->objective = solution->travel_time_sum;
+  solution->used_vehicles = instance_->getVehicleCount();
 
   solution->feasible = getTotalConstraintViolation() == 0;
 

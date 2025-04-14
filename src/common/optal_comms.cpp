@@ -31,7 +31,7 @@ void OptalComms::run() {
         continue;
 
       std::lock_guard<std::mutex> lock(solution_lock_);
-      if (best_solution_ == nullptr || new_solution->objective < best_solution_->objective) {
+      if (best_solution_ == nullptr || new_solution->betterThan(*best_solution_)) {
         best_solution_ = new_solution;
       }
       else
@@ -53,7 +53,7 @@ void OptalComms::acceptSolution(std::shared_ptr<Solution> solution) {
   if(!solution->feasible)
     return;
   std::lock_guard<std::mutex> lock(solution_lock_);
-  if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
+  if(best_solution_ == nullptr || solution->betterThan(*best_solution_)){
     best_solution_ = solution;
     const std::string solution_string = serializer_->serializeSolution(solution);
     std::cout << solution_string << std::endl;

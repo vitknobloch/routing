@@ -149,6 +149,7 @@ std::shared_ptr<Solution> TspIndividual::convertSolution() {
   route.route_nodes = nodes;
   solution->routes.push_back(route);
   solution->feasible = true;
+  solution->used_vehicles = 1;
 
   return solution;
 }

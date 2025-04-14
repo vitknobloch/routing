@@ -38,7 +38,10 @@ void ObjectiveValueLogger::log(const Solution &solution) {
     return;
   }
   if(file_ && file_.is_open()){
-    file_ << getSecondsElapsed() << " " << solution.objective << std::endl;
+    if(solution.used_vehicles != 0)
+      file_ << getSecondsElapsed() << " " << solution.objective << " " << solution.used_vehicles << std::endl;
+    else
+      file_ << getSecondsElapsed() << " " << solution.objective << std::endl;
   }else{
     std::cerr << "Log file is closed when trying to log a solution." << std::endl;
   }

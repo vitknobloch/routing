@@ -17,6 +17,16 @@ void VrptwExhaustiveLocalSearch::sendSolution(
     const std::shared_ptr<Solution> &solution) {
   if(solution == nullptr || portfolio_ == nullptr)
     return;
+
+
+  uint count = 0;
+  for(const auto &r: solution->routes){
+    if(r.route_nodes.size() > 2)
+      count++;
+  }
+  std::cerr << "solution routes: " << count << std::endl;
+
+
   portfolio_->acceptSolution(solution);
 }
 
@@ -27,7 +37,7 @@ bool VrptwExhaustiveLocalSearch::checkBetterSolution(
     return false;
   }
   std::lock_guard<std::recursive_mutex> lock(solution_mutex_);
-  if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
+  if(best_solution_ == nullptr || solution->betterThan(*best_solution_)){
     best_solution_ = solution;
     return true;
   }

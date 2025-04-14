@@ -456,6 +456,7 @@ std::shared_ptr<Solution> CvrpIndividualStructured::convertSolution() {
     sol_route.route_nodes.emplace_back(0, sol_route.end_time, sol_route.end_time);
   }
 
+  solution->used_vehicles = (int)routes_.size();
   solution->feasible = getTotalConstraintViolation() == 0;
 
   return solution;

@@ -32,7 +32,7 @@ void ExhaustiveLocalSearch::run(
       // nothing to do
     }else if(result == Neighborhood::SearchResult::EXHAUSTED){
       // restart search
-      std::cerr << "Restarted search" << std::endl;
+      //std::cerr << "Restarted search" << std::endl;
       neighborhood_->reset(solution);
       solution->smartInitialize();
       solution->evaluate();

@@ -1,6 +1,6 @@
 import { defineModelCVRP, defineModelTSP, defineModelVRPTW } from "./modeller.js";
 import { parseTspLib, parseSolomon } from "./parser.js";
-import { parseSolutionCVRP, parseSolutionTSP, serializeSolutionCVRP, serializeSolutionTSP } from "./solutionParser.js";
+import { parseSolutionCVRP, parseSolutionTSP, parseSolutionVRPTW, serializeSolutionCVRP, serializeSolutionTSP, serializeSolutionVRPTW } from "./solutionParser.js";
 import * as CP from '@scheduleopt/optalcp';
 import { spawn } from 'child_process';
 import { readConfig } from "./config_loader.js";
@@ -80,12 +80,12 @@ if (problemType == "TSP") {
     let [model, vars] = defineModelVRPTW(instance, instanceFilename);
 
     heuristicsPipe.on('line', async line => {
-        let solution = parseSolutionCVRP(line, vars, instance);
+        let solution = parseSolutionVRPTW(line, vars, instance);
         solver.sendSolution(solution);
     });
 
     solver.on('solution', async (msg: CP.SolutionEvent) => {
-        let solution_string = serializeSolutionCVRP(msg.solution, vars, instance);
+        let solution_string = serializeSolutionVRPTW(msg.solution, vars, instance);
         heuristics.stdin.write(`${solution_string}\n`);
     });
 

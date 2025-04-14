@@ -28,6 +28,8 @@ SolutionSerializer::parseSolution(std::string solution_string) {
   solution->routes = std::list<SolutionRoute>();
   for(uint i = 0; i < route_count; i++){
     solution->routes.push_back(parseRoute(routes_json[i]));
+    if(solution->routes.back().route_nodes.size() > 2)
+      solution->used_vehicles++;
   }
   return solution;
 }

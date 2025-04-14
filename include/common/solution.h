@@ -28,8 +28,19 @@ struct SolutionRoute{
 
 struct Solution {
   std::list<SolutionRoute> routes;
+  int used_vehicles = 0;
   int travel_time_sum = -1;
   int end_time_sum = -1;
   int objective = -1;
   bool feasible = true;
+
+  [[nodiscard]] bool betterThan(const Solution &other) const{
+    if(!feasible && other.feasible)
+      return false;
+    if(used_vehicles > other.used_vehicles)
+      return false;
+    else if(used_vehicles < other.used_vehicles)
+      return true;
+    return objective < other.objective;
+  }
 };

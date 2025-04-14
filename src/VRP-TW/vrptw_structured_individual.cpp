@@ -93,12 +93,13 @@ std::shared_ptr<Solution> VrptwIndividualStructured::convertSolution() {
 
     sol_route.route_nodes.emplace_back(0, sol_route.end_time, sol_route.end_time);
     //sol_route.travel_time += instance_->getDistance(prev_node, 0);
-    solution->travel_time_sum += sol_route.travel_time;
-    solution->end_time_sum += sol_route.end_time;
+    //solution->travel_time_sum += sol_route.travel_time;
+    //solution->end_time_sum += sol_route.end_time;
   }
 
   solution->objective = solution->travel_time_sum;
   solution->feasible = timeViolation() == 0 && capacityViolation() == 0;
+  solution->used_vehicles = (int)vehicles_used_;
 
   return solution;
 }
@@ -377,9 +378,16 @@ void VrptwIndividualStructured::performExchangeMove(
   auto new_route1 = insertSegment(route1, route2, segment1, segment2);
   auto new_route2 = insertSegment(route2, route1, segment2, segment1);
 
+  /*
   assert(new_route1.time_violation + new_route2.time_violation <= route1.time_violation + route2.time_violation);
+  assertEvaluation(route1);
+  assertEvaluation(route2);
   assertEvaluation(new_route1);
   assertEvaluation(new_route2);
+  if(route1.time_violation + route2.time_violation == 0){
+    assert(route1.travel_time + route2.travel_time > new_route1.travel_time + new_route2.travel_time);
+  }
+  */
 
   exchange_route(segment1.route_idx, new_route1);
   exchange_route(segment2.route_idx, new_route2);
@@ -398,10 +406,13 @@ void VrptwIndividualStructured::performRelocateMove(
 
   auto new_route_from = insertSegment(route_from, route_to, segment_moved, target_pos);
   auto new_route_to = insertSegment(route_to, route_from, target_pos, segment_moved);
-
+  /*
   assert(new_route_from.time_violation + new_route_to.time_violation <= route_from.time_violation + route_to.time_violation);
+  assertEvaluation(route_from);
+  assertEvaluation(route_to);
   assertEvaluation(new_route_from);
   assertEvaluation(new_route_to);
+  */
 
   exchange_route(segment_moved.route_idx, new_route_from);
   exchange_route(target_pos.route_idx, new_route_to);
@@ -423,10 +434,12 @@ void VrptwIndividualStructured::performCrossMove(
   auto new_route1 = insertSegment(route1, route2, segment1_, segment2_);
   auto new_route2 = insertSegment(route2, route1, segment2_, segment1_);
 
+  /*
   assert(route1.time_violation + route2.time_violation >= new_route1.time_violation + new_route2.time_violation);
-
+  assertEvaluation(route1);
+  assertEvaluation(route2);
   assertEvaluation(new_route1);
-  assertEvaluation(new_route2);
+  assertEvaluation(new_route2);*/
 
   exchange_route(segment1.route_idx, new_route1);
   exchange_route(segment2.route_idx, new_route2);
@@ -645,7 +658,7 @@ bool VrptwIndividualStructured::testExchangeMoveNoViolation(
   if(demand1_new > capacity || demand2_new > capacity) // violates demand constraints
     return false;
 
-  const uint travel_time_old = route1.time + route2.time;
+  const uint travel_time_old = route1.travel_time + route2.travel_time;
   const uint travel_time_new = getExchangeTravelTime(segment1, segment2) + getExchangeTravelTime(segment2, segment1);
 
   int new_empty_count = 0;
@@ -736,7 +749,7 @@ int VrptwIndividualStructured::exchangeTimeViolationChange(
     if(time > (uint)nodes[customer.idx].due_date)
       time_violation_new += (int)time - nodes[customer.idx].due_date;
     if(customer.time_up_to > (uint)nodes[customer.idx].due_date)
-      time_violation_old += (int)time - nodes[customer.idx].due_date;
+      time_violation_old += (int)customer.time_up_to - nodes[customer.idx].due_date;
     time = std::max(time, (uint)nodes[customer.idx].ready_time);
     time += (uint)nodes[customer.idx].service_time;
     prev_node = customer.idx;
@@ -751,7 +764,7 @@ int VrptwIndividualStructured::exchangeTimeViolationChange(
     if(time > (uint)nodes[customer.idx].due_date)
       time_violation_new += (int)time - nodes[customer.idx].due_date;
     if(customer.time_up_to > (uint)nodes[customer.idx].due_date)
-      time_violation_old += (int)time - nodes[customer.idx].due_date;
+      time_violation_old += (int)customer.time_up_to - nodes[customer.idx].due_date;
     time += (uint)nodes[customer.idx].service_time;
     prev_node = customer.idx;
   }

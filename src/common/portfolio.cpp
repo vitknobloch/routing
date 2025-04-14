@@ -41,7 +41,7 @@ void HeuristicPortfolio::terminate() {
 
 void HeuristicPortfolio::acceptSolution(const std::shared_ptr<Solution>& solution) {
   std::lock_guard<std::mutex> lock(solution_lock_);
-  if(best_solution_ == nullptr || solution->objective < best_solution_->objective){
+  if(best_solution_ == nullptr || solution->betterThan(*best_solution_)){
     best_solution_ = solution;
     sendSolution();
 
