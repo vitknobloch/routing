@@ -33,7 +33,10 @@ def run_file(model_filename, log_dir):
         
         with open(os.path.join(log_dir, f"{seed}.log"), "w") as f:
             for time, objective in zip(times, objectives):
-                f.write(f"{time} {objective}\n")
+                if problem == "VRP-TW":
+                    f.write(f"{time} {objective % 1_000_000} {objective // 1_000_000}\n")
+                else:
+                    f.write(f"{time} {objective}\n")
 
 def run_problem(problem):
     assert problem in ["TSP", "CVRP", "VRP-TW"]

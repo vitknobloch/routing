@@ -37,6 +37,9 @@ set(HEURISTIC_FRAMEWORK
         src/heuristic_framework/population_stochastic_ranking.cpp
         src/heuristic_framework/stochastic_ranking.cpp
         src/heuristic_framework/exhaustive_local_search.cpp
+        src/heuristic_framework/basic_schedule_memory.cpp
+        src/heuristic_framework/simulated_annealing_basic.cpp
+        src/heuristic_framework/memetic.cpp
 )
 
 set(TSP
@@ -46,6 +49,11 @@ set(TSP
         src/TSP/tsp_mutation_2opt.cpp
         src/TSP/tsp_pmx_crossover.cpp
         src/TSP/tsp_genetic_algorithm.cpp
+        src/TSP/tsp_individual_structured.cpp
+        src/TSP/tsp_mutation_double_bridge.cpp
+        src/TSP/tsp_neighborhood.cpp
+        src/TSP/tsp_memetic.cpp
+        src/TSP/tsp_pmx_crossover_structured.cpp
 )
 
 set(CVRP
@@ -67,6 +75,9 @@ set(VRP-TW
         src/VRP-TW/vrptw_structured_individual.cpp
         src/VRP-TW/vrptw_neighborhood.cpp
         src/VRP-TW/vrptw_exhaustive_local_search.cpp
+        src/VRP-TW/vrptw_SA_basic_step.cpp
+        src/VRP-TW/vrptw_SA_basic_schedule.cpp
+        src/VRP-TW/vrptw_SA_basic.cpp
 )
 
 add_executable(Heuristic

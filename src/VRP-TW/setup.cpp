@@ -4,11 +4,13 @@
 #include "VRP-TW/setup.h"
 #include <iostream>
 
-#include "common/routing_instance.h"
-#include "common/optal_comms.h"
-#include "VRP-TW/vrptw_neighborhood.h"
+#include "VRP-TW/vrptw_SA_basic.h"
+#include "VRP-TW/vrptw_SA_basic_schedule.h"
+#include "VRP-TW/vrptw_SA_basic_step.h"
 #include "VRP-TW/vrptw_exhaustive_local_search.h"
-
+#include "VRP-TW/vrptw_neighborhood.h"
+#include "common/optal_comms.h"
+#include "common/routing_instance.h"
 
 std::shared_ptr<HeuristicPortfolio>
 SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) {
@@ -29,6 +31,12 @@ SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) 
       auto neighborhood = std::make_shared<VrptwNeighborhood>();
       auto localSearch = std::make_shared<VrptwExhaustiveLocalSearch>(instance, neighborhood);
       portfolio->addImprovingHeuristic(localSearch);
+    }
+    else if(heur_config["type"] == "simulated_annealing"){
+      auto step = std::make_shared<VrptwSABasicStep>();
+      auto schedule = std::make_shared<VrptwSABasicSchedule>(10000, 20.0);
+      auto sa = std::make_shared<VrptwSABasic>(instance, step, schedule);
+      portfolio->addImprovingHeuristic(sa);
     }
   }
 

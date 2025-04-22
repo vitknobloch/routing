@@ -160,8 +160,8 @@ export function defineModelVRPTW(instance: ParseResult, filename: string): [CP.M
     assert(instance.demands !== undefined, "Demands are not defined in the input file");
     assert(instance.nbVehicles !== undefined, "Number of vehicles is not defined");
     assert(instance.ready_times !== undefined, "Ready times are not defined in input file");
-    assert(instance.due_times !== undefined, "Ready times are not defined in input file");
-    assert(instance.service_times !== undefined, "Ready times are not defined in input file");
+    assert(instance.due_times !== undefined, "Due times are not defined in input file");
+    assert(instance.service_times !== undefined, "Service times are not defined in input file");
 
     // The data format supports multiple depots, but we don't have any data files with multiple depots:
     assert(instance.depots.length == 1, "Multiple depots are not supported yet");

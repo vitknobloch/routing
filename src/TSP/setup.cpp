@@ -4,14 +4,18 @@
 #include "TSP/setup.h"
 #include <iostream>
 
-#include "TSP/tsp_local_search.h"
 #include "TSP/tsp_genetic_algorithm.h"
+#include "TSP/tsp_local_search.h"
+#include "TSP/tsp_memetic.h"
 #include "TSP/tsp_mutation_2opt.h"
+#include "TSP/tsp_mutation_double_bridge.h"
+#include "TSP/tsp_neighborhood.h"
+#include "TSP/tsp_pmx_crossover_structured.h"
 #include "TSP/tsp_pmx_crossover.h"
-#include "heuristic_framework/truncation_replacement.h"
-#include "heuristic_framework/tournament_selection.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
+#include "heuristic_framework/tournament_selection.h"
+#include "heuristic_framework/truncation_replacement.h"
 
 std::shared_ptr<HeuristicPortfolio>
 SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
@@ -51,6 +55,25 @@ SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
           10
           );
       portfolio->addImprovingHeuristic(geneticAlgorithm);
+    }
+    else if(heur_config["type"] == "memetic_algorithm"){
+      auto mutation = std::make_shared<TspMutationDoubleBridge>();
+      mutation->setMutationRate(0.1);
+      auto selection = std::make_shared<TournamentSelection>(3);
+      auto crossover = std::make_shared<TspPmxCrossoverStructured>();
+      crossover->setCrossoverRate(0.8);
+      auto neighborhood = std::make_shared<TspNeighborhood>();
+      auto replacement = std::make_shared<TruncationReplacement>();
+      auto memetic_algorithm = std::make_shared<TspMemetic>(
+          instance,
+          neighborhood,
+          mutation,
+          selection,
+          crossover,
+          replacement,
+          10
+      );
+      portfolio->addImprovingHeuristic(memetic_algorithm);
     }
   }
   return portfolio;

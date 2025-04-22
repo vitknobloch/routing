@@ -4,14 +4,13 @@
 
 #pragma once
 
+#include "basic_schedule_memory.h"
+
+using StepResult = SABasicScheduleMemory::StepResult;
+
 class SABasicSchedule{
 
 public:
-  enum StepResult {
-    IMPROVED /** Better solution found */,
-    ACCEPTED /** Worse solution accepted */,
-    UNACCEPTED /** Worse solution not accepted */
-  };
 
   virtual void registerResult(const StepResult &result) = 0;
   virtual void reset() = 0;
