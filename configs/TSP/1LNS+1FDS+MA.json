@@ -1,0 +1,14 @@
+{
+  "problem": "TSP",
+  "heuristics": [
+    {
+      "type": "memetic_algorithm",
+      "mutation": "random"
+    }
+  ],
+  "optal": {
+    "LNS": 1,
+    "FDS": 1,
+    "neighborhoodStrategy": 2
+  }
+}

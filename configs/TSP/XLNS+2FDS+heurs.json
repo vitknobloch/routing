@@ -7,10 +7,14 @@
         {
             "type": "local_search",
             "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
         }
     ],
     "optal": {
-        "LNS": 8,
+        "LNS": 7,
         "FDS": 2,
         "neighborhoodStrategy": 2
     }

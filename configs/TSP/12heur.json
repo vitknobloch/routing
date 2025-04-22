@@ -14,17 +14,19 @@
             "type": "genetic_algorithm"
         },
         {
-            "type": "genetic_algorithm"
-        },
-        {
-            "type": "genetic_algorithm"
-        },
-        {
-            "type": "local_search",
+            "type": "memetic_algorithm",
             "mutation": "random"
         },
         {
-            "type": "local_search",
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
             "mutation": "random"
         },
         {
