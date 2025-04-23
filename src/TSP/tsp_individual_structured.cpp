@@ -37,10 +37,10 @@ std::shared_ptr<Solution> TspIndividualStructured::convertSolution() {
   solution->used_vehicles = 1;
   solution->travel_time_sum = total_time_;
 
-  uint time = 0;
+  uint time = 1;
   solution->routes.emplace_back();
   auto &route = solution->routes.back();
-  route.route_nodes.emplace_back(0, 0, 0);
+  route.route_nodes.emplace_back(0, 0, 1);
   uint prev_node = 0;
   for(const auto &node : data_){
     time += instance_->getDistance(prev_node, node);
@@ -49,7 +49,7 @@ std::shared_ptr<Solution> TspIndividualStructured::convertSolution() {
     prev_node = node;
   }
   time += instance_->getDistance(prev_node, 0);
-  route.route_nodes.emplace_back(0, time, time);
+  route.route_nodes.emplace_back(0, time, time + 1);
   route.demand = 0;
   route.travel_time = solution->travel_time_sum;
   route.end_time = time;
