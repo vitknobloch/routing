@@ -5,9 +5,12 @@
 #include <iostream>
 
 #include "CVRP/cvrp_exhaustive_local_search.h"
+#include "CVRP/cvrp_memetic.h"
 #include "CVRP/cvrp_mutation_random.h"
+#include "CVRP/cvrp_mutation_reinsert.h"
 #include "CVRP/cvrp_neighborhood.h"
 #include "CVRP/cvrp_pmx_crossover.h"
+#include "CVRP/cvrp_pmx_crossover_structured.h"
 #include "CVRP/cvrp_stochastic_local_search.h"
 #include "CVRP/cvrp_stochastic_ranking.h"
 #include "common/optal_comms.h"
@@ -52,6 +55,25 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
           0.55 // fitness compare probability
           );
       portfolio->addImprovingHeuristic(stochasticRanking);
+    }
+    else if(heur_config["type"] == "memetic_algorithm"){
+      auto mutation = std::make_shared<CvrpMutationReinsert>();
+      mutation->setMutationRate(0.1);
+      auto selection = std::make_shared<TournamentSelection>(3);
+      auto crossover = std::make_shared<CvrpPmxCrossoverStructured>();
+      crossover->setCrossoverRate(0.8);
+      auto neighborhood = std::make_shared<CvrpNeighborhood>();
+      auto replacement = std::make_shared<TruncationReplacement>();
+      auto memetic_algorithm = std::make_shared<CvrpMemetic>(
+          instance,
+          neighborhood,
+          mutation,
+          selection,
+          crossover,
+          replacement,
+          10
+      );
+      portfolio->addImprovingHeuristic(memetic_algorithm);
     }
   }
 

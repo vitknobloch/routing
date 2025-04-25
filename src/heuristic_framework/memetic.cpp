@@ -76,7 +76,9 @@ void MemeticAlgorithm::run(
       new_solution->smartInitialize();
       new_solution->resetEvaluated();
       new_solution->evaluate();
+      assert(new_solution->getFitness() > 0);
       population_->addIndividual(new_solution);
+      neighborhood_->reset(best_individual_);
       Neighborhood::SearchResult result = neighborhood_->search(new_solution);
       while(result != Neighborhood::SearchResult::EXHAUSTED){
         checkBetterSolution(new_solution);
@@ -97,6 +99,7 @@ void MemeticAlgorithm::run(
         mutation_->mutate(individual);
       }
       individual->evaluate();
+      neighborhood_->reset(individual);
       Neighborhood::SearchResult result = neighborhood_->search(individual);
       while(result != Neighborhood::SearchResult::EXHAUSTED){
         checkBetterSolution(individual);

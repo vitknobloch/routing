@@ -1,15 +1,15 @@
 //
-// Created by knoblvit on 22.4.25.
+// Created by knoblvit on 25.4.25.
 //
 
 #pragma once
 
 #include "heuristic_framework/memetic.h"
 #include "common/heuristic.h"
-#include "TSP/tsp_individual_structured.h"
+#include "CVRP/cvrp_structured_individual.h"
 #include <atomic>
 
-class TspMemetic : public Heuristic{
+class CvrpMemetic : public Heuristic{
 private:
   std::shared_ptr<Solution> best_solution_;
   std::shared_ptr<RoutingInstance> instance_;
@@ -28,14 +28,14 @@ private:
   bool checkBetterSolution(const std::shared_ptr<Solution> &solution);
 
 public:
-  TspMemetic(const std::shared_ptr<RoutingInstance> &instance,
-             const std::shared_ptr<Neighborhood> &neighborhood,
-             const std::shared_ptr<Mutation> &mutation,
-             const std::shared_ptr<Selection> &selection,
-             const std::shared_ptr<Crossover> &crossover,
-             const std::shared_ptr<Replacement> &replacement,
-             uint population_size
-             );
+  CvrpMemetic(const std::shared_ptr<RoutingInstance> &instance,
+              const std::shared_ptr<Neighborhood> &neighborhood,
+              const std::shared_ptr<Mutation> &mutation,
+              const std::shared_ptr<Selection> &selection,
+              const std::shared_ptr<Crossover> &crossover,
+              const std::shared_ptr<Replacement> &replacement,
+              uint population_size
+              );
 
   void initialize(HeuristicPortfolio *portfolio) override;
   void run() override;

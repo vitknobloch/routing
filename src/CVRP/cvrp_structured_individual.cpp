@@ -44,6 +44,34 @@ CvrpIndividualStructured::CvrpIndividualStructured(
 CvrpIndividualStructured::CvrpIndividualStructured(
     const CvrpIndividualStructured &cpy) : instance_(cpy.instance_), routes_(cpy.routes_), total_time_(cpy.total_time_), demand_violation_(cpy.demand_violation_), is_evaluated_(cpy.is_evaluated_) {}
 
+
+CvrpIndividualStructured::CvrpIndividualStructured(
+    const CvrpIndividualStructured &cpy, const std::vector<uint> &flat_data) : instance_(cpy.instance_), routes_(instance_->getVehicleCount()), total_time_(0), demand_violation_(1, 0), is_evaluated_(false) {
+  uint i = 0;
+  total_time_ = 0;
+  const auto &nodes = instance_->getNodes();
+  for(auto & route : routes_){
+    route.demand = 0;
+    route.time = 0;
+    uint prev_node = 0;
+    route.customers = std::vector<CvrpIndividualCustomer>();
+    while(flat_data[i] < instance_->getNodesCount()){
+      uint cur_node = flat_data[i];
+      route.demand += nodes[cur_node].demand;
+      route.time += instance_->getDistance(prev_node, cur_node);
+      route.customers.emplace_back(cur_node, route.time, route.demand);
+      prev_node = cur_node;
+      i++;
+    }
+    route.time += instance_->getDistance(prev_node, 0);
+    i++;
+    total_time_ += route.time;
+    demand_violation_[0] += std::max(0, (int)route.demand - instance_->getVehicleCapacity());
+  }
+  is_evaluated_ = true;
+  assert(assertIndividual());
+}
+
 void CvrpIndividualStructured::initialize() {
   routes_ = std::vector<CvrpIndividualRoute>(instance_->getVehicleCount());
   const auto &nodes = instance_->getNodes();
@@ -81,9 +109,9 @@ void CvrpIndividualStructured::initialize() {
   // calculate final stats for the whole solution
   demand_violation_[0] = 0;
   total_time_ = 0;
-  for(uint r = 0; r < routes_.size(); r++){
-    total_time_ += routes_[r].time;
-    demand_violation_[0] += std::max(0, (int)routes_[r].demand - instance_->getVehicleCapacity());
+  for(auto & route : routes_){
+    total_time_ += route.time;
+    demand_violation_[0] += std::max(0, (int)route.demand - instance_->getVehicleCapacity());
   }
   is_evaluated_ = true;
 }
@@ -148,7 +176,10 @@ void CvrpIndividualStructured::evaluate() {
       prev_node = cur_node;
     }
     route.time += instance_->getDistance(prev_node, 0);
+    total_time_ += route.time;
+    demand_violation_[0] += std::max(0, (int)route.demand - instance_->getVehicleCapacity());
   }
+  is_evaluated_ = true;
 }
 const std::vector<CvrpIndividualRoute> &CvrpIndividualStructured::getRoutes() {
   return routes_;
@@ -460,4 +491,47 @@ std::shared_ptr<Solution> CvrpIndividualStructured::convertSolution() {
   solution->feasible = getTotalConstraintViolation() == 0;
 
   return solution;
+}
+std::vector<uint> CvrpIndividualStructured::flatten() {
+  std::vector<uint> result;
+  result.reserve(instance_->getNodesCount() + instance_->getVehicleCount() - 1);
+  std::vector<uint> lowest_customer_idx(routes_.size(), instance_->getNodesCount());
+  std::vector<uint> routes_sorted(routes_.size(), 0);
+  for(uint i = 0; i < routes_.size(); i++){
+    routes_sorted[i] = i;
+    for(uint j = 0; j < routes_[i].customers.size(); j++){
+      if(routes_[i].customers[j].idx < lowest_customer_idx[i]){
+        lowest_customer_idx[i] = routes_[i].customers[j].idx;
+      }
+    }
+  }
+  std::sort(routes_sorted.begin(), routes_sorted.end(), [&](uint i, uint j){
+    return lowest_customer_idx[i] < lowest_customer_idx[j];
+  });
+
+  for(uint i = 0; i < routes_.size(); i++){
+    const auto &route = routes_[routes_sorted[i]];
+    for(uint j = 0; j < route.customers.size(); j++){
+      result.push_back(route.customers[j].idx);
+    }
+    result.push_back(instance_->getNodesCount() + i);
+  }
+  return result;
+}
+bool CvrpIndividualStructured::assertIndividual() {
+  std::vector<bool> used_nodes(instance_->getNodesCount(), false);
+  for(const auto &route: routes_){
+    for(const auto &customer: route.customers){
+      if(customer.idx >= instance_->getNodesCount())
+        return false;
+      if(used_nodes[customer.idx])
+        return false;
+      used_nodes[customer.idx] = true;
+    }
+  }
+  for(uint i = 1; i < instance_->getNodesCount(); i++){
+    if(!used_nodes[i])
+      return false;
+  }
+  return true;
 }

@@ -93,11 +93,12 @@ bool CvrpNeighborhood::perform2opt(
   CvrpRouteSegment segment{};
   for(uint r = 0; r < routes.size(); r++){
     segment.route_idx = r;
-    for(uint i = 0; i < routes[r].customers.size() - 1; i++){
+    for(int i = 0; i < (int)routes[r].customers.size() - 1; i++){
       segment.segment_start_idx = i;
-      const uint max_length = routes[r].customers.size() - i;
-      for(uint l = 2; l <= max_length; l++){
+      const int max_length = (int)routes[r].customers.size() - i;
+      for(int l = 2; l <= max_length; l++){
         segment.segment_length = l;
+        assert(routes[r].customers.size() >= segment.segment_start_idx + segment.segment_length);
         if(individual->test2optMove(segment)){
           individual->perform2optMove(segment);
           performed = true;

@@ -1,0 +1,14 @@
+{
+  "problem": "CVRP",
+  "heuristics": [
+    {
+      "type": "memetic_algorithm",
+      "mutation": "random"
+    }
+  ],
+  "optal": {
+    "LNS": 0,
+    "FDS": 0,
+    "neighborhoodStrategy": 2
+  }
+}

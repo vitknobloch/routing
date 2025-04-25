@@ -1,18 +1,17 @@
 //
-// Created by knoblvit on 22.4.25.
+// Created by knoblvit on 25.4.25.
 //
 
-#include "TSP/tsp_memetic.h"
-#include "TSP/tsp_individual.h"
+#include "CVRP/cvrp_memetic.h"
 #include <iostream>
 
-TspMemetic::TspMemetic(const std::shared_ptr<RoutingInstance> &instance,
-                       const std::shared_ptr<Neighborhood> &neighborhood,
-                       const std::shared_ptr<Mutation> &mutation,
-                       const std::shared_ptr<Selection> &selection,
-                       const std::shared_ptr<Crossover> &crossover,
-                       const std::shared_ptr<Replacement> &replacement,
-                       uint population_size) : terminate_() {
+CvrpMemetic::CvrpMemetic(const std::shared_ptr<RoutingInstance> &instance,
+                         const std::shared_ptr<Neighborhood> &neighborhood,
+                         const std::shared_ptr<Mutation> &mutation,
+                         const std::shared_ptr<Selection> &selection,
+                         const std::shared_ptr<Crossover> &crossover,
+                         const std::shared_ptr<Replacement> &replacement,
+                         uint population_size) {
   instance_ = instance;
   neighborhood_ = neighborhood;
   mutation_ = mutation;
@@ -26,13 +25,13 @@ TspMemetic::TspMemetic(const std::shared_ptr<RoutingInstance> &instance,
   portfolio_ = nullptr;
 }
 
-void TspMemetic::sendSolution(const std::shared_ptr<Solution> &solution) {
+void CvrpMemetic::sendSolution(const std::shared_ptr<Solution> &solution) {
   if(solution == nullptr || portfolio_ == nullptr)
     return;
   portfolio_->acceptSolution(solution);
 }
 
-bool TspMemetic::checkBetterSolution(
+bool CvrpMemetic::checkBetterSolution(
     const std::shared_ptr<Solution> &solution) {
   if(solution->objective < 0) { // integer overflow
     std::cerr << "Integer overflow encountered in CVRP exhaustive local search solution value" << std::endl;
@@ -46,7 +45,7 @@ bool TspMemetic::checkBetterSolution(
   return false;
 }
 
-void TspMemetic::initialize(HeuristicPortfolio *portfolio) {
+void CvrpMemetic::initialize(HeuristicPortfolio *portfolio) {
   portfolio_ = portfolio;
   terminate_ = false;
   std::shared_ptr<Callbacks> callbacks = std::make_shared<Callbacks>();
@@ -54,34 +53,34 @@ void TspMemetic::initialize(HeuristicPortfolio *portfolio) {
     return terminate_;
   });
   callbacks->addNewBestSolutionCallback([this](const std::shared_ptr<Individual> &individual) {
-    auto individual_ = std::static_pointer_cast<TspIndividualStructured>(individual);
+    auto individual_ = std::static_pointer_cast<CvrpIndividualStructured>(individual);
     auto solution = individual_->convertSolution();
     sendSolution(solution);
   });
   memetic_algorithm_ = std::make_shared<MemeticAlgorithm>(callbacks, neighborhood_, mutation_, selection_, crossover_, replacement_);
 }
 
-void TspMemetic::run() {
+void CvrpMemetic::run() {
   auto initialPopulation = std::make_shared<Population>();
   for(uint i = 0; i < population_size_; i++){
-    auto solution = std::make_shared<TspIndividualStructured>(instance_.get());
+    auto solution = std::make_shared<CvrpIndividualStructured>(instance_.get());
     solution->smartInitialize();
     initialPopulation->addIndividual(solution);
   }
   initialPopulation->evaluate();
-  const auto &best_individual = std::static_pointer_cast<TspIndividualStructured>(initialPopulation->getBestIndividual());
+  const auto &best_individual = std::static_pointer_cast<CvrpIndividualStructured>(initialPopulation->getBestIndividual());
   best_solution_ = best_individual->convertSolution();
   portfolio_->acceptSolution(best_solution_);
   memetic_algorithm_->run(initialPopulation);
 }
 
-void TspMemetic::terminate() {
+void CvrpMemetic::terminate() {
   terminate_.store(true);
 }
 
-void TspMemetic::acceptSolution(std::shared_ptr<Solution> solution) {
+void CvrpMemetic::acceptSolution(std::shared_ptr<Solution> solution) {
   if(checkBetterSolution(solution)){
-    auto individual = std::make_shared<TspIndividualStructured>(instance_.get(), solution);
+    auto individual = std::make_shared<CvrpIndividualStructured>(instance_.get(), solution);
     memetic_algorithm_->acceptOutsideSolution(individual);
   }
 }

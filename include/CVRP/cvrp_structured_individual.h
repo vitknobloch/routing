@@ -71,6 +71,7 @@ public:
   explicit CvrpIndividualStructured(const RoutingInstance * const instance);
   explicit CvrpIndividualStructured(const RoutingInstance * const instance, const std::shared_ptr<Solution> &solution);
   CvrpIndividualStructured(const CvrpIndividualStructured &cpy);
+  CvrpIndividualStructured(const CvrpIndividualStructured &cpy, const std::vector<uint> &flat_data);
   std::shared_ptr<Solution> convertSolution();
   void initialize() override;
   void smartInitialize() override;
@@ -84,6 +85,7 @@ public:
   bool isEvaluated() override;
   std::shared_ptr<Individual> deepcopy() override;
   void evaluate() override;
+  std::vector<uint> flatten();
   ~CvrpIndividualStructured() override = default;
 
   const std::vector<CvrpIndividualRoute> &getRoutes();
@@ -108,4 +110,6 @@ public:
   /** Returns true if the cross move will make fitness better
    * (Constant time but still quite demanding) */
   bool testCrossMove(const CvrpRouteSegment &segment1, const CvrpRouteSegment &segment2);
+
+  bool assertIndividual();
 };

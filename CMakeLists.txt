@@ -66,6 +66,9 @@ set(CVRP
         src/CVRP/cvrp_pmx_crossover.cpp
         src/CVRP/cvrp_neighborhood.cpp
         src/CVRP/cvrp_exhaustive_local_search.cpp
+        src/CVRP/cvrp_memetic.cpp
+        src/CVRP/cvrp_pmx_crossover_structured.cpp
+        src/CVRP/cvrp_mutation_reinsert.cpp
 )
 
 set(VRP-TW

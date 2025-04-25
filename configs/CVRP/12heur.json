@@ -18,16 +18,16 @@
             "mutation": "random"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "stochastic_ranking"
+            "type": "memetic_algorithm"
         },
         {
             "type": "exhaustive_local_search",

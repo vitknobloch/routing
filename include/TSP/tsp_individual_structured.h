@@ -24,7 +24,7 @@ public:
   explicit TspIndividualStructured(const RoutingInstance* const instance);
   TspIndividualStructured(const RoutingInstance* const instance, const std::shared_ptr<Solution> &solution);
   TspIndividualStructured(const TspIndividualStructured &cpy);
-  explicit TspIndividualStructured(const TspIndividualStructured &cpy, const std::vector<uint> &flat_data);
+  TspIndividualStructured(const TspIndividualStructured &cpy, const std::vector<uint> &flat_data);
   std::shared_ptr<Solution> convertSolution();
   void initialize() override;
   void smartInitialize() override;
