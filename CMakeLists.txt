@@ -81,6 +81,9 @@ set(VRP-TW
         src/VRP-TW/vrptw_SA_basic_step.cpp
         src/VRP-TW/vrptw_SA_basic_schedule.cpp
         src/VRP-TW/vrptw_SA_basic.cpp
+        src/VRP-TW/vrptw_memetic.cpp
+        src/VRP-TW/vrptw_pmx_crossover_structured.cpp
+        src/VRP-TW/vrptw_mutation_reinsert.cpp
 )
 
 add_executable(Heuristic

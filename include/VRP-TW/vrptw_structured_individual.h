@@ -98,6 +98,7 @@ public:
   explicit VrptwIndividualStructured(const RoutingInstance * const instance);
   explicit VrptwIndividualStructured(const RoutingInstance * const instance, const std::shared_ptr<Solution> &solution);
   VrptwIndividualStructured(const VrptwIndividualStructured &cpy);
+  VrptwIndividualStructured(const VrptwIndividualStructured &cpy, const std::vector<uint> &flat_data);
   std::shared_ptr<Solution> convertSolution();
   void initialize() override;
   void smartInitialize() override;
@@ -111,6 +112,7 @@ public:
   bool isEvaluated() override;
   std::shared_ptr<Individual> deepcopy() override;
   void evaluate() override;
+  std::vector<uint> flatten();
   ~VrptwIndividualStructured() override = default;
 
   const std::vector<VrptwIndividualRoute> &getRoutes();

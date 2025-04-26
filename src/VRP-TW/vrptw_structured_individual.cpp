@@ -64,6 +64,21 @@ VrptwIndividualStructured::VrptwIndividualStructured(
 VrptwIndividualStructured::VrptwIndividualStructured(
     const VrptwIndividualStructured &cpy) : instance_(cpy.instance_), routes_(cpy.routes_), total_time_(cpy.total_time_), total_travel_time_(cpy.total_travel_time_), vehicles_used_(cpy.vehicles_used_), violations_(cpy.violations_), is_evaluated_(cpy.is_evaluated_) {}
 
+VrptwIndividualStructured::VrptwIndividualStructured(
+    const VrptwIndividualStructured &cpy, const std::vector<uint> &flat_data) : instance_(cpy.instance_), routes_(instance_->getVehicleCount()), total_time_(0), total_travel_time_(0), vehicles_used_(0), violations_(2, 0), is_evaluated_(false) {
+  uint i = 0;
+  for(auto & route : routes_){
+    route.customers = std::vector<VrptwIndividualCustomer>();
+    while(flat_data[i] < instance_->getNodesCount()){
+      uint cur_node = flat_data[i];
+      route.customers.emplace_back(cur_node, 0, 0, 0);
+      i++;
+    }
+    i++;
+  }
+  evaluate();
+}
+
 std::shared_ptr<Solution> VrptwIndividualStructured::convertSolution() {
   evaluate();
   auto solution = std::make_shared<Solution>();
@@ -245,6 +260,8 @@ void VrptwIndividualStructured::evaluate() {
     capacityViolation() += std::max(0, (int)routes_[r].demand - instance_->getVehicleCapacity());
     timeViolation() += routes_[r].time_violation;
   }
+
+  is_evaluated_ = true;
 }
 const std::vector<VrptwIndividualRoute> &
 VrptwIndividualStructured::getRoutes() {
@@ -803,4 +820,30 @@ bool VrptwIndividualStructured::assertEvaluation(
   assert(time == route.time);
   assert(time_violation == route.time_violation);
   return true;
+}
+std::vector<uint> VrptwIndividualStructured::flatten() {
+  std::vector<uint> result;
+  result.reserve(instance_->getNodesCount() + instance_->getVehicleCount() - 1);
+  std::vector<uint> lowest_customer_idx(routes_.size(), instance_->getNodesCount());
+  std::vector<uint> routes_sorted(routes_.size(), 0);
+  for(uint i = 0; i < routes_.size(); i++){
+    routes_sorted[i] = i;
+    for(uint j = 0; j < routes_[i].customers.size(); j++){
+      if(routes_[i].customers[j].idx < lowest_customer_idx[i]){
+        lowest_customer_idx[i] = routes_[i].customers[j].idx;
+      }
+    }
+  }
+  std::sort(routes_sorted.begin(), routes_sorted.end(), [&](uint i, uint j){
+    return lowest_customer_idx[i] < lowest_customer_idx[j];
+  });
+
+  for(uint i = 0; i < routes_.size(); i++){
+    const auto &route = routes_[routes_sorted[i]];
+    for(uint j = 0; j < route.customers.size(); j++){
+      result.push_back(route.customers[j].idx);
+    }
+    result.push_back(instance_->getNodesCount() + i);
+  }
+  return result;
 }

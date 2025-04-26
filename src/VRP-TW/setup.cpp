@@ -8,9 +8,14 @@
 #include "VRP-TW/vrptw_SA_basic_schedule.h"
 #include "VRP-TW/vrptw_SA_basic_step.h"
 #include "VRP-TW/vrptw_exhaustive_local_search.h"
+#include "VRP-TW/vrptw_memetic.h"
+#include "VRP-TW/vrptw_mutation_reinsert.h"
 #include "VRP-TW/vrptw_neighborhood.h"
+#include "VRP-TW/vrptw_pmx_crossover_structured.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
+#include "heuristic_framework/tournament_selection.h"
+#include "heuristic_framework/truncation_replacement.h"
 
 std::shared_ptr<HeuristicPortfolio>
 SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) {
@@ -37,6 +42,25 @@ SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) 
       auto schedule = std::make_shared<VrptwSABasicSchedule>(10000, 20.0);
       auto sa = std::make_shared<VrptwSABasic>(instance, step, schedule);
       portfolio->addImprovingHeuristic(sa);
+    }
+    else if(heur_config["type"] == "memetic_algorithm"){
+      auto mutation = std::make_shared<VrptwMutationReinsert>();
+      mutation->setMutationRate(0.1);
+      auto selection = std::make_shared<TournamentSelection>(3);
+      auto crossover = std::make_shared<VrptwPmxCrossoverStructured>();
+      crossover->setCrossoverRate(0.8);
+      auto neighborhood = std::make_shared<VrptwNeighborhood>();
+      auto replacement = std::make_shared<TruncationReplacement>();
+      auto memetic_algorithm = std::make_shared<VrptwMemetic>(
+          instance,
+          neighborhood,
+          mutation,
+          selection,
+          crossover,
+          replacement,
+          10
+      );
+      portfolio->addImprovingHeuristic(memetic_algorithm);
     }
   }
 

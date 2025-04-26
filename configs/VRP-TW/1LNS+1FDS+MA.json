@@ -1,0 +1,14 @@
+{
+  "problem": "VRP-TW",
+  "heuristics": [
+    {
+      "type": "memetic_algorithm",
+      "neighborhood": "paper_guided_LS_VRPTW"
+    }
+  ],
+  "optal": {
+    "LNS": 1,
+    "FDS": 1,
+    "neighborhoodStrategy": 2
+  }
+}
