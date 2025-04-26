@@ -61,6 +61,9 @@ SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) 
           10
       );
       portfolio->addImprovingHeuristic(memetic_algorithm);
+    }else{
+      std::cerr << "Unknown heuristic type: " << heur_config["type"] << std::endl;
+      exit(101);
     }
   }
 

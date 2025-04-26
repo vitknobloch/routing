@@ -1,6 +1,51 @@
 {
     "problem": "VRP-TW",
-    "heuristics": {},
+    "heuristics": [
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "memetic_algorithm",
+            "mutation": "random"
+        },
+        {
+            "type": "exhaustive_local_search"
+        },
+        {
+            "type": "exhaustive_local_search"
+        },
+        {
+            "type": "exhaustive_local_search"
+        },
+        {
+            "type": "exhaustive_local_search"
+        },
+        {
+            "type": "simulated_annealing",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        },
+        {
+            "type": "simulated_annealing",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        },
+        {
+            "type": "simulated_annealing",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        },
+        {
+            "type": "simulated_annealing",
+            "neighborhood": "paper_guided_LS_VRPTW"
+        }
+    ],
     "optal": {
         "LNS": 0,
         "FDS": 0,
