@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 20.4.25.
-//
-
 #pragma once
 #include "callbacks.h"
 #include "crossover.h"

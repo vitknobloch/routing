@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 28.3.25.
-//
-
 #pragma once
 #include "common/routing_instance.h"
 #include "vrptw_individual.h"

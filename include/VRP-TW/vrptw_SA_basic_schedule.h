@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 15.4.25.
-//
-
 #pragma once
 
 #include "heuristic_framework/simulated_annealing_basic_schedule.h"

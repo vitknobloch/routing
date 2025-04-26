@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 21.4.25.
-//
-
 #pragma once
 
 #include "heuristic_framework/individual.h"

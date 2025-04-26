@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 13.4.25.
-//
-
 /*
  * Acceptance does not depend on fitness value of new individual only on the wanted acceptance rate in time.
  * This is done to make use of the fast functions determining whether the new solution is better/worse

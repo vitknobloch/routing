@@ -1,6 +1,4 @@
-//
-// Created by knoblvit on 9.2.25.
-//
+#pragma once
 
 #include "routing_instance.h"
 #include <cassert>
@@ -8,8 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
-
-#pragma once
 
 class RoutingInstance::TSPlibLoader{
 public:

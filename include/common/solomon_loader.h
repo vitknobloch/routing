@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 10.2.25.
-//
-
 #pragma once
 #include "common/routing_instance.h"
 

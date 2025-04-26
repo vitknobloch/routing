@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 6.2.25.
-//
 #pragma once
 
 class HeuristicPortfolio;

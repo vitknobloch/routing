@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 8.4.25.
-//
-
 #pragma once
 
 #include "VRP-TW/vrptw_structured_individual.h"

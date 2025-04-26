@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 6.2.25.
-//
-
 #pragma once
 #include <string>
 #include "nlohmann/json.hpp"

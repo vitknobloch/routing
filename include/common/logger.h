@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 12.2.25.
-//
-
 #pragma once
 #include <chrono>
 #include <fstream>

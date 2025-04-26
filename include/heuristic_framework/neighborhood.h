@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 31.3.25.
-//
-
 #pragma once
 
 #include "individual.h"

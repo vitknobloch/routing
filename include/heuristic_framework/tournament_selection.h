@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 28.2.25.
-//
-
 #pragma once
 
 #include "selection.h"

@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 3.3.25.
-//
-
 #pragma once
 
 #include "CVRP/cvrp_individual.h"

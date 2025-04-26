@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 8.2.25.
-//
-
 #pragma once
 #include "common/portfolio.h"
 #include "json.hpp"

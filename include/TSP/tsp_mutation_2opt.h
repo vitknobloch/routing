@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 24.2.25.
-//
-
 #pragma once
 #include "heuristic_framework/mutation.h"
 #include <random>

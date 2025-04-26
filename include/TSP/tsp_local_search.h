@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 22.2.25.
-//
-
 #pragma once
 
 #include "TSP/tsp_individual.h"

@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 19.4.25.
-//
-
 #pragma once
 #include "heuristic_framework/simulated_annealing_basic.h"
 #include "VRP-TW/vrptw_structured_individual.h"

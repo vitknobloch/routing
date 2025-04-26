@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 13.4.25.
-//
-
 #pragma once
 
 #include "basic_schedule_memory.h"

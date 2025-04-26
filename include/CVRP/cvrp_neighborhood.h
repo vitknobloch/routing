@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 31.3.25.
-//
-
 #pragma once
 #include "heuristic_framework/neighborhood.h"
 #include "CVRP/cvrp_structured_individual.h"
