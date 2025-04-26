@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 6.2.25.
-//
-
 #include "CVRP/setup.h"
 #include "TSP/setup.h"
 #include "VRP-TW/setup.h"

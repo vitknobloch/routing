@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 3.3.25.
-//
 #include "CVRP/cvrp_stochastic_ranking.h"
 #include <cassert>
 #include <iostream>

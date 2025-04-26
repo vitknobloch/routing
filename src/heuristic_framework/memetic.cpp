@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 21.4.25.
-//
-
 #include "heuristic_framework/memetic.h"
 #include <cassert>
 

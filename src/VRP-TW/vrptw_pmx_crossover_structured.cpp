@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 26.4.25.
-//
 #include "VRP-TW/vrptw_pmx_crossover_structured.h"
 #include <map>
 

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 9.2.25.
-//
 #include "common/tsplib_loader.h"
 
 inline std::string RoutingInstance::TSPlibLoader::strip(const std::string& line) {

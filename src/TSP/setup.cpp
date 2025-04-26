@@ -1,17 +1,15 @@
-//
-// Created by knoblvit on 9.2.25.
-//
 #include "TSP/setup.h"
 #include <iostream>
 
+#include "TSP/tsp_exhaustive_local_search.h"
 #include "TSP/tsp_genetic_algorithm.h"
 #include "TSP/tsp_local_search.h"
 #include "TSP/tsp_memetic.h"
 #include "TSP/tsp_mutation_2opt.h"
 #include "TSP/tsp_mutation_double_bridge.h"
 #include "TSP/tsp_neighborhood.h"
-#include "TSP/tsp_pmx_crossover_structured.h"
 #include "TSP/tsp_pmx_crossover.h"
+#include "TSP/tsp_pmx_crossover_structured.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
 #include "heuristic_framework/tournament_selection.h"
@@ -74,7 +72,13 @@ SetupTSP::preparePortfolio(const JSON &config, const char *instance_filename) {
           10
       );
       portfolio->addImprovingHeuristic(memetic_algorithm);
-    }else{
+    }
+    else if(heur_config["type"] == "exhaustive_local_search"){
+      auto neighborhood = std::make_shared<TspNeighborhood>();
+      auto localSearch = std::make_shared<TspExhaustiveLocalSearch>(instance, neighborhood);
+      portfolio->addImprovingHeuristic(localSearch);
+    }
+    else{
       std::cerr << "Unknown heuristic type: " << heur_config["type"] << std::endl;
       exit(101);
     }

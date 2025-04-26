@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 15.4.25.
-//
 #include "heuristic_framework/basic_schedule_memory.h"
 #include <cassert>
 

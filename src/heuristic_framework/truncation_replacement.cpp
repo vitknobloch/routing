@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 28.2.25.
-//
 #include "heuristic_framework/truncation_replacement.h"
 
 std::shared_ptr<Population> TruncationReplacement::replacementFunction(

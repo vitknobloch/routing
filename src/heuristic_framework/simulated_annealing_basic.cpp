@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 15.4.25.
-//
 #include "heuristic_framework/simulated_annealing_basic.h"
 #include <cassert>
 SimulatedAnnealingBasic::SimulatedAnnealingBasic(

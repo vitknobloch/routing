@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 30.3.25.
-//
 #include "CVRP/cvrp_structured_individual.h"
 #include <cassert>
 #include <random>

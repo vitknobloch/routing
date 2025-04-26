@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 15.4.25.
-//
 #include "VRP-TW/vrptw_SA_basic_step.h"
 #include <cassert>
 VrptwSABasicStep::VrptwSABasicStep() : rand_(), gen_(rand_()), dist_(0.0, 1.0) {

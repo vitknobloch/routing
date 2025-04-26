@@ -30,19 +30,19 @@
             "mutation": "random"
         },
         {
-            "type": "local_search",
+            "type": "exhaustive_local_search",
             "mutation": "random"
         },
         {
-            "type": "local_search",
+            "type": "exhaustive_local_search",
             "mutation": "random"
         },
         {
-            "type": "local_search",
+            "type": "exhaustive_local_search",
             "mutation": "random"
         },
         {
-            "type": "local_search",
+            "type": "exhaustive_local_search",
             "mutation": "random"
         }
     ],

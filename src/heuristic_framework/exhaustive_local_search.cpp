@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 31.3.25.
-//
 #include "heuristic_framework/exhaustive_local_search.h"
 #include <cassert>
 #include <iostream>

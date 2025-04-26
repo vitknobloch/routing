@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 25.4.25.
-//
-
 #include "CVRP/cvrp_memetic.h"
 #include <iostream>
 

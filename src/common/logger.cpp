@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 12.2.25.
-//
 #include "common/logger.h"
 #include <iostream>
 

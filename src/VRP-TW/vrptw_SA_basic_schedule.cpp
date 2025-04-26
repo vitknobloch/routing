@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 15.4.25.
-//
 #include "VRP-TW/vrptw_SA_basic_schedule.h"
 #include "heuristic_framework/basic_schedule_memory.h"
 #include <cmath>

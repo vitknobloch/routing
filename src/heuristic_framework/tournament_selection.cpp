@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 28.2.25.
-//
 #include "heuristic_framework/tournament_selection.h"
 #include <algorithm>
 #include <cassert>

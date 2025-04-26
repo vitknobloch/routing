@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 8.4.25.
-//
 #include "VRP-TW/vrptw_exhaustive_local_search.h"
 #include <iostream>
 VrptwExhaustiveLocalSearch::VrptwExhaustiveLocalSearch(

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 26.4.25.
-//
 #include "VRP-TW/vrptw_memetic.h"
 #include <iostream>
 

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 8.4.25.
-//
 #include "VRP-TW/vrptw_neighborhood.h"
 #include <cassert>
 #include <iostream>

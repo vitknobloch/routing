@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 29.3.25.
-//
 #include "VRP-TW/vrptw_mutation_random.h"
 #include <cassert>
 

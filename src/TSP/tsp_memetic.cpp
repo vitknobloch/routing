@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 22.4.25.
-//
-
 #include "TSP/tsp_memetic.h"
 #include "TSP/tsp_individual.h"
 #include <iostream>

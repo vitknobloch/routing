@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 3.3.25.
-//
 #include "CVRP/cvrp_pmx_crossover.h"
 #include <map>
 std::shared_ptr<CvrpIndividual>

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 24.2.25.
-//
 #include "TSP/tsp_mutation_2opt.h"
 #include "TSP/tsp_individual.h"
 #include <cassert>

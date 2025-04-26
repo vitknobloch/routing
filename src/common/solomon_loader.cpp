@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 10.2.25.
-//
 #include "common/solomon_loader.h"
 #include <cassert>
 #include <cmath>

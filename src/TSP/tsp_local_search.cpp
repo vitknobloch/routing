@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 23.2.25.
-//
 #include "TSP/tsp_local_search.h"
 #include <iostream>
 #include <random>

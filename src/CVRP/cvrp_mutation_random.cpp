@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 24.2.25.
-//
 #include "CVRP/cvrp_mutation_random.h"
 #include "CVRP/cvrp_individual.h"
 #include <cassert>

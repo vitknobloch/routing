@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 9.3.25.
-//
 #include "VRP-TW/vrptw_individual.h"
 
 #include <cassert>

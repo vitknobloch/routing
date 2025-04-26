@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 9.2.25.
-//
 #include "common/routing_instance.h"
 #include "common/tsplib_loader.h"
 #include "common/solomon_loader.h"

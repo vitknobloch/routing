@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 7.2.25.
-//
 #include "common/serializer.h"
 #include <sstream>
 

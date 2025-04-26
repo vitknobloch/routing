@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 22.2.25.
-//
 #include "heuristic_framework/stochastic_local_search.h"
 #include <cassert>
 #include <iostream>

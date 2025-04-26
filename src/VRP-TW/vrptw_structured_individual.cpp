@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 1.4.25.
-//
 #include "VRP-TW/vrptw_structured_individual.h"
 #include <algorithm>
 #include <cassert>

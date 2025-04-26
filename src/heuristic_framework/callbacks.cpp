@@ -1,7 +1,3 @@
-//
-// Created by knoblvit on 22.2.25.
-//
-
 #include "heuristic_framework/callbacks.h"
 
 #include <iostream>

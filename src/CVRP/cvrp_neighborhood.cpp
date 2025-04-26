@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 31.3.25.
-//
 #include "CVRP/cvrp_neighborhood.h"
 #include <cassert>
 

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 6.2.25.
-//
 #include "common/optal_comms.h"
 #include <iostream>
 #include <mutex>

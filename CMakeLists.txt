@@ -54,6 +54,7 @@ set(TSP
         src/TSP/tsp_neighborhood.cpp
         src/TSP/tsp_memetic.cpp
         src/TSP/tsp_pmx_crossover_structured.cpp
+        src/TSP/tsp_exhaustive_local_search.cpp
 )
 
 set(CVRP

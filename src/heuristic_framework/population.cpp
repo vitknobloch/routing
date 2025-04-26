@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 28.2.25.
-//
 #include "heuristic_framework/population.h"
 #include <cassert>
 #include <algorithm>

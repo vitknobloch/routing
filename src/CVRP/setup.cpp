@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 9.2.25.
-//
 #include "CVRP//setup.h"
 #include <iostream>
 

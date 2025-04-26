@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 22.4.25.
-//
 #include "TSP/tsp_pmx_crossover_structured.h"
 #include <map>
 

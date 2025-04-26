@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 22.2.25.
-//
 #include "TSP/tsp_individual.h"
 #include <bitset>
 #include <cassert>

@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 21.4.25.
-//
 #include "TSP/tsp_individual_structured.h"
 #include <cassert>
 #include <limits>
@@ -139,6 +136,7 @@ std::shared_ptr<Individual> TspIndividualStructured::deepcopy() {
 void TspIndividualStructured::evaluate() {
   if(!is_evaluated_)
     calculateFitness();
+  is_evaluated_ = true;
 }
 const std::vector<uint> &TspIndividualStructured::getData() {
   return data_;

@@ -5,7 +5,7 @@
             "type": "genetic_algorithm"
         },
         {
-            "type": "local_search",
+            "type": "exhaustive_local_search",
             "mutation": "random"
         },
         {

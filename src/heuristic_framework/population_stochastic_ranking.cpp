@@ -1,6 +1,3 @@
-//
-// Created by knoblvit on 3.3.25.
-//
 #include "heuristic_framework/population_stochastic_ranking.h"
 #include <algorithm>
 #include <functional>
