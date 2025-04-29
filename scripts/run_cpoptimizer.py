@@ -16,7 +16,7 @@ def get_command(seed, model_filename):
     return [f"{RUN_SCRIPT_PATH}", "--output", TEMP_LOG_FILENAME, *CPO_ARGUMENTS, "--RandomSeed", seed, model_filename]
 
 
-def run_file(model_filename, log_dir):
+def run_file(model_filename, log_dir, problem):
     os.makedirs(log_dir, exist_ok=True)
     for seed in SEEDS:
         command = get_command(seed, model_filename)
@@ -33,10 +33,7 @@ def run_file(model_filename, log_dir):
         
         with open(os.path.join(log_dir, f"{seed}.log"), "w") as f:
             for time, objective in zip(times, objectives):
-                if problem == "VRP-TW":
-                    f.write(f"{time} {objective % 1_000_000} {objective // 1_000_000}\n")
-                else:
-                    f.write(f"{time} {objective}\n")
+                f.write(f"{time} {objective}\n")
 
 def run_problem(problem):
     assert problem in ["TSP", "CVRP", "VRP-TW"]
@@ -47,7 +44,7 @@ def run_problem(problem):
         log_dir = os.path.join(PROJECT_ROOT, "logs", problem, instance_name, CONFIG_NAME)
         model_filename = os.path.join(model_dir, f"{os.path.splitext(instance_name)[0]}.cpo")
         print(f"running file: {instance_name}")
-        run_file(model_filename, log_dir)
+        run_file(model_filename, log_dir, problem)
 
 if __name__ == '__main__':
     problems = sys.argv[1:]

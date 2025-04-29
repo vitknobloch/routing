@@ -8,6 +8,6 @@ using StepResult = SABasicScheduleMemory::StepResult;
 class SABasicStep{
 public:
 
-  virtual StepResult step(const std::shared_ptr<Individual> &individual, const std::shared_ptr<SABasicSchedule> &schedule) = 0;
+  virtual StepResult step(std::shared_ptr<Individual> &individual, const std::shared_ptr<SABasicSchedule> &schedule) = 0;
   virtual void reset(const std::shared_ptr<Individual> &individual) = 0;
 };

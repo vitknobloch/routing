@@ -35,6 +35,6 @@ private:
 
 public:
   VrptwSABasicStep();
-  StepResult step(const std::shared_ptr<Individual> &individual, const std::shared_ptr<SABasicSchedule> &schedule) override;
+  StepResult step(std::shared_ptr<Individual> &individual, const std::shared_ptr<SABasicSchedule> &schedule) override;
   void reset(const std::shared_ptr<Individual> &individual) override;
 };

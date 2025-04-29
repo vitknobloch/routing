@@ -7,13 +7,14 @@
 #pragma once
 
 #include <memory>
-#include "mutex"
+#include <mutex>
 #include "simulated_annealing_basic_step.h"
 #include "simulated_annealing_basic_schedule.h"
 #include "individual.h"
 #include "callbacks.h"
 
 class SimulatedAnnealingBasic{
+private:
   std::shared_ptr<SABasicStep> step_;
   std::shared_ptr<SABasicSchedule> schedule_;
   std::shared_ptr<Callbacks> callbacks_;

@@ -532,3 +532,81 @@ bool CvrpIndividualStructured::assertIndividual() {
   }
   return true;
 }
+
+FitnessDiff
+CvrpIndividualStructured::get2optMoveCost(const CvrpRouteSegment &segment) {
+  if(segment.segment_length < 2)
+    return {0, 0, 0};
+  const uint end_idx = segment.segment_start_idx + segment.segment_length - 1;
+  assert(segment.route_idx < routes_.size());
+  const auto &customers = routes_[segment.route_idx].customers;
+  assert(segment.segment_start_idx < customers.size() && end_idx < customers.size());
+  const uint prev_node = segment.segment_start_idx == 0 ? 0 : customers[segment.segment_start_idx - 1].idx;
+  const uint next_node = end_idx + 1 >= customers.size() ? 0 : customers[end_idx + 1].idx;
+  const uint first_node = customers[segment.segment_start_idx].idx;
+  const uint last_node = customers[end_idx].idx;
+
+  const uint old_length = instance_->getDistance(prev_node, first_node) + instance_->getDistance(last_node, next_node);
+  const uint new_length = instance_->getDistance(prev_node, last_node) + instance_->getDistance(first_node, next_node);
+  return {(int)new_length - (int)old_length, 0, 0};
+}
+
+FitnessDiff CvrpIndividualStructured::getExchangeMoveCost(
+    const CvrpRouteSegment &segment1, const CvrpRouteSegment &segment2) {
+  assert(segment1.route_idx != segment2.route_idx);
+  assert(segment1.route_idx < routes_.size() && segment2.route_idx < routes_.size());
+  const auto &route1 = routes_[segment1.route_idx];
+  const auto &route2 = routes_[segment2.route_idx];
+  assert(segment1.segment_start_idx <= route1.customers.size() && segment1.segment_start_idx + segment1.segment_length <= route1.customers.size());
+  assert(segment2.segment_start_idx <= route2.customers.size() && segment2.segment_start_idx + segment2.segment_length <= route2.customers.size());
+  const uint demand1 = getSegmentDemand(segment1);
+  const uint demand2 = getSegmentDemand(segment2);
+
+  const auto &capacity = instance_->getVehicleCapacity();
+  const int demand_violation_old = std::max(0, (int)route1.demand - capacity) +
+                                   std::max(0, (int)route2.demand - capacity);
+
+  const int demand_violation_new = std::max(0, (int)route1.demand + (int)demand2 - (int)demand1 - capacity) +
+                                   std::max(0, (int)route2.demand + (int)demand1 - (int)demand2 - capacity);
+
+  const uint time_old = route1.time + route2.time;
+  const uint time_new = getExchangeTime(segment1, segment2) + getExchangeTime(segment2, segment1);
+  return {(int)time_new - (int)time_old, demand_violation_new - demand_violation_old, 0};
+}
+
+FitnessDiff CvrpIndividualStructured::getRelocateMoveCost(
+    const CvrpRouteSegment &segment_moved, const CvrpRouteSegment &target_pos) {
+  assert(segment_moved.route_idx != target_pos.route_idx);
+  assert(segment_moved.route_idx < routes_.size() && target_pos.route_idx < routes_.size());
+  const auto &route_from = routes_[segment_moved.route_idx];
+  const auto &route_to = routes_[target_pos.route_idx];
+  assert(segment_moved.segment_start_idx < route_from.customers.size() && segment_moved.segment_start_idx + segment_moved.segment_length <= route_from.customers.size());
+  assert(target_pos.segment_start_idx <= route_to.customers.size() && target_pos.segment_length == 0);
+  const uint demand = getSegmentDemand(segment_moved);
+
+  const auto &capacity = instance_->getVehicleCapacity();
+  const int demand_violation_old = std::max(0, (int)route_from.demand - capacity) +
+                                   std::max(0, (int)route_to.demand - capacity);
+
+  const int demand_violation_new = std::max(0, (int)route_from.demand - (int)demand - capacity) +
+                                   std::max(0, (int)route_to.demand + (int)demand - capacity);
+
+  const uint time_old = route_from.time + route_to.time;
+  const uint time_new = getExchangeTime(segment_moved, target_pos) + getExchangeTime(target_pos, segment_moved);
+  return {(int)time_new - (int)time_old, demand_violation_new - demand_violation_old, 0};
+}
+
+FitnessDiff
+CvrpIndividualStructured::getCrossMoveCost(const CvrpRouteSegment &segment1,
+                                           const CvrpRouteSegment &segment2) {
+  auto segment1_ = segment1;
+  auto segment2_ = segment2;
+  segment1_.segment_length = routes_[segment1.route_idx].customers.size() - segment1.segment_start_idx;
+  segment2_.segment_length = routes_[segment2.route_idx].customers.size() - segment2.segment_start_idx;
+  return getExchangeMoveCost(segment1_, segment2_);
+}
+
+FitnessDiff CvrpIndividualStructured::getFitnessDiff(
+    const CvrpIndividualStructured &other) {
+  return {(int)total_time_ - (int)other.total_time_, (int)(demand_violation_[0] - other.demand_violation_[0]), 0};
+}

@@ -178,21 +178,6 @@ bool TspIndividualStructured::test2optMove(
   return new_distance < prev_distance;
 }
 
-double
-TspIndividualStructured::get2optMoveCost(const TspIndividualSegment &segment) {
-  assert(segment.start_idx < segment.end_idx);
-  assert(segment.start_idx < data_.size());
-  assert(segment.end_idx < data_.size());
-
-  const uint high = segment.end_idx;
-  const uint low = segment.start_idx;
-  const uint prev_node = low > 0 ? data_[low - 1] : 0;
-  const uint next_node = high < data_.size() - 1 ? data_[high + 1] : 0;
-  const int prev_distance = (int)instance_->getDistance(prev_node, data_[low]) + (int)instance_->getDistance(data_[high], next_node);
-  const int new_distance = (int)instance_->getDistance(prev_node, data_[high]) + (int)instance_->getDistance(data_[low], next_node);
-  return new_distance - prev_distance;
-}
-
 void TspIndividualStructured::performDoubleBridgeMove(
     const TspIndividualSegment &segment1,
     const TspIndividualSegment &segment2) {
@@ -244,4 +229,152 @@ std::vector<uint> TspIndividualStructured::flatten() {
   std::vector<uint> flat_data(1, 0);
   flat_data.insert(flat_data.end(), data_.begin(), data_.end());
   return flat_data;
+}
+
+void TspIndividualStructured::performSwapMove(uint idx1, uint idx2) {
+  assert(std::abs((int)idx1 - (int)idx2) > 1);
+  assert(idx1 < data_.size() && idx2 < data_.size());
+  const uint prev1 = idx1 > 0 ? data_[idx1 - 1] : 0;
+  const uint prev2 = idx2 > 0 ? data_[idx2 - 1] : 0;
+  const uint next1 = idx1 < data_.size() - 1 ? data_[idx1 + 1] : 0;
+  const uint next2 = idx2 < data_.size() - 1 ? data_[idx2 + 1] : 0;
+  const uint cur1 = data_[idx1];
+  const uint cur2 = data_[idx2];
+
+  total_time_ += instance_->getDistance(prev1, cur2) + instance_->getDistance(cur2, next1);
+  total_time_ += instance_->getDistance(prev2, cur1) + instance_->getDistance(cur1, next2);
+  total_time_ -= (instance_->getDistance(prev1, cur1) + instance_->getDistance(cur1, next1));
+  total_time_ -= (instance_->getDistance(prev2, cur2) + instance_->getDistance(cur2, next2));
+
+  data_[idx1] = cur2;
+  data_[idx2] = cur1;
+}
+bool TspIndividualStructured::testSwapMove(uint idx1, uint idx2) {
+  assert(std::abs((int)idx1 - (int)idx2) > 1);
+  assert(idx1 < data_.size() && idx2 < data_.size());
+  const uint prev1 = idx1 > 0 ? data_[idx1 - 1] : 0;
+  const uint prev2 = idx2 > 0 ? data_[idx2 - 1] : 0;
+  const uint next1 = idx1 < data_.size() - 1 ? data_[idx1 + 1] : 0;
+  const uint next2 = idx2 < data_.size() - 1 ? data_[idx2 + 1] : 0;
+  const uint cur1 = data_[idx1];
+  const uint cur2 = data_[idx2];
+
+  int diff = (int)(instance_->getDistance(prev1, cur2) + instance_->getDistance(cur2, next1));
+  diff += (int)(instance_->getDistance(prev2, cur1) + instance_->getDistance(cur1, next2));
+  diff -= (int)(instance_->getDistance(prev1, cur1) + instance_->getDistance(cur1, next1));
+  diff -= (int)(instance_->getDistance(prev2, cur2) + instance_->getDistance(cur2, next2));
+
+  return diff < 0;
+}
+
+void TspIndividualStructured::performRelocateMove(uint idx_from, uint idx_to) {
+  assert(idx_from != idx_to);
+  const uint prev_from = idx_from > 0 ? data_[idx_from - 1] : 0;
+  const uint prev_to = idx_to > 0 ? data_[idx_to - 1] : 0;
+  const uint next_from = idx_from < data_.size() - 1 ? data_[idx_from + 1] : 0;
+  const uint next_to = idx_to < data_.size() - 1 ? data_[idx_to + 1] : 0;
+  const uint cur_to = data_[idx_to];
+  const uint cur_from = data_[idx_from];
+
+
+  if(idx_from < idx_to){
+    for(uint i = idx_from; i < idx_to; i++){
+      data_[i] = data_[i+1];
+    }
+    data_[idx_to] = cur_from;
+    total_time_ += instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, next_to) + instance_->getDistance(cur_to, cur_from);
+    total_time_ -= instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(cur_to, next_to);
+
+  }else if(idx_from > idx_to){
+    for(uint i = idx_from; i > idx_to; i--){
+      data_[i] = data_[i-1];
+    }
+    data_[idx_to] = cur_from;
+    total_time_ += instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, cur_to) + instance_->getDistance(prev_to, cur_from);
+    total_time_ -= instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(prev_to, cur_to);
+
+  }
+}
+
+bool TspIndividualStructured::testRelocateMove(uint idx_from, uint idx_to) {
+  assert(idx_from != idx_to);
+  const uint prev_from = idx_from > 0 ? data_[idx_from - 1] : 0;
+  const uint prev_to = idx_to > 0 ? data_[idx_to - 1] : 0;
+  const uint next_from = idx_from < data_.size() - 1 ? data_[idx_from + 1] : 0;
+  const uint next_to = idx_to < data_.size() - 1 ? data_[idx_to + 1] : 0;
+  const uint cur_to = data_[idx_to];
+  const uint cur_from = data_[idx_from];
+
+
+  int diff = 0;
+  if(idx_from < idx_to){
+    diff += (int)(instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, next_to) + instance_->getDistance(cur_to, cur_from));
+    diff -= (int)(instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(cur_to, next_to));
+  }else if(idx_from > idx_to){
+    diff += (int)(instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, cur_to) + instance_->getDistance(prev_to, cur_from));
+    diff -= (int)(instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(prev_to, cur_to));
+  }
+
+  return diff < 0;
+}
+
+FitnessDiff
+TspIndividualStructured::get2optMoveCost(const TspIndividualSegment &segment) {
+  assert(segment.start_idx < segment.end_idx);
+  assert(segment.start_idx < data_.size());
+  assert(segment.end_idx < data_.size());
+
+  const uint high = segment.end_idx;
+  const uint low = segment.start_idx;
+  const uint prev_node = low > 0 ? data_[low - 1] : 0;
+  const uint next_node = high < data_.size() - 1 ? data_[high + 1] : 0;
+  const uint prev_distance = instance_->getDistance(prev_node, data_[low]) + instance_->getDistance(data_[high], next_node);
+  const uint new_distance = instance_->getDistance(prev_node, data_[high]) + instance_->getDistance(data_[low], next_node);
+  return {.fitness = (int)new_distance - (int)prev_distance, .constraints = 0, .vehicles = 0};
+
+}
+
+FitnessDiff TspIndividualStructured::getSwapMoveCost(uint idx1, uint idx2) {
+  assert(idx1 < data_.size() && idx2 < data_.size());
+  const uint prev1 = idx1 > 0 ? data_[idx1 - 1] : 0;
+  const uint prev2 = idx2 > 0 ? data_[idx2 - 1] : 0;
+  const uint next1 = idx1 < data_.size() - 1 ? data_[idx1 + 1] : 0;
+  const uint next2 = idx2 < data_.size() - 1 ? data_[idx2 + 1] : 0;
+  const uint cur1 = data_[idx1];
+  const uint cur2 = data_[idx2];
+
+  int diff = (int)(instance_->getDistance(prev1, cur2) + instance_->getDistance(cur2, next1));
+  diff += (int)(instance_->getDistance(prev2, cur1) + instance_->getDistance(cur1, next2));
+  diff -= (int)(instance_->getDistance(prev1, cur1) + instance_->getDistance(cur1, next1));
+  diff -= (int)(instance_->getDistance(prev2, cur2) + instance_->getDistance(cur2, next2));
+
+  return {.fitness = diff, .constraints = 0, .vehicles = 0};
+}
+
+FitnessDiff TspIndividualStructured::getRelocateMoveCost(uint idx_from,
+                                                         uint idx_to) {
+  assert(idx_from != idx_to);
+  const uint prev_from = idx_from > 0 ? data_[idx_from - 1] : 0;
+  const uint prev_to = idx_to > 0 ? data_[idx_to - 1] : 0;
+  const uint next_from = idx_from < data_.size() - 1 ? data_[idx_from + 1] : 0;
+  const uint next_to = idx_to < data_.size() - 1 ? data_[idx_to + 1] : 0;
+  const uint cur_to = data_[idx_to];
+  const uint cur_from = data_[idx_from];
+
+
+  int diff = 0;
+  if(idx_from < idx_to){
+    diff += (int)(instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, next_to) + instance_->getDistance(cur_to, cur_from));
+    diff -= (int)(instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(cur_to, next_to));
+  }else if(idx_from > idx_to){
+    diff += (int)(instance_->getDistance(prev_from, next_from) + instance_->getDistance(cur_from, cur_to) + instance_->getDistance(prev_to, cur_from));
+    diff -= (int)(instance_->getDistance(prev_from, cur_from) + instance_->getDistance(cur_from, next_from) + instance_->getDistance(prev_to, cur_to));
+  }
+
+  return {.fitness = diff, .constraints = 0, .vehicles = 0};
+}
+
+FitnessDiff
+TspIndividualStructured::getFitnessDiff(const TspIndividualStructured &other) {
+  return {.fitness = (int)total_time_ - (int)other.total_time_, .constraints = 0, .vehicles = 0};
 }

@@ -1,6 +1,7 @@
 #include "CVRP//setup.h"
 #include <iostream>
 
+#include "CVRP/cvrp_SA_step.h"
 #include "CVRP/cvrp_exhaustive_local_search.h"
 #include "CVRP/cvrp_memetic.h"
 #include "CVRP/cvrp_mutation_random.h"
@@ -8,8 +9,10 @@
 #include "CVRP/cvrp_neighborhood.h"
 #include "CVRP/cvrp_pmx_crossover.h"
 #include "CVRP/cvrp_pmx_crossover_structured.h"
+#include "CVRP/cvrp_simulated_annealing.h"
 #include "CVRP/cvrp_stochastic_local_search.h"
 #include "CVRP/cvrp_stochastic_ranking.h"
+#include "common/SA_schedule_functions.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
 
@@ -71,7 +74,24 @@ SetupCVRP::preparePortfolio(const JSON &config, const char *instance_filename) {
           10
       );
       portfolio->addImprovingHeuristic(memetic_algorithm);
-    }else{
+    }
+    else if(heur_config["type"] == "simulated_annealing"){
+      auto step = std::make_shared<CvrpSAStep>();
+      auto average_length = getAverageEdgeLength(*instance);
+      auto initial_temperature =
+          getTemperatureByTargetAcceptanceRate(average_length / 10, 0.5);
+      auto final_temperature =
+          getTemperatureByTargetAcceptanceRate(average_length / 10, 0.01);
+      auto schedule = std::make_shared<SASchedule>(
+          getExpSchedule(initial_temperature, final_temperature, 60.0), //temp
+          [](double t){return 0;}, //vehicle
+          getEquivalentPunishmentFunction(average_length, 15.0) //constraint
+      );
+      //auto schedule = std::make_shared<SASchedule>([](double t){return 0.01;});
+      auto sa = std::make_shared<CvrpSimulatedAnnealing>(instance, step, schedule);
+      portfolio->addImprovingHeuristic(sa);
+    }
+    else{
       std::cerr << "Unknown heuristic type: " << heur_config["type"] << std::endl;
       exit(101);
     }

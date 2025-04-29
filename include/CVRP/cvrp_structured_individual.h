@@ -1,6 +1,7 @@
 #pragma once
 
 #include "heuristic_framework/individual.h"
+#include "heuristic_framework/simulated_annealing_fitness_diff.h"
 #include "common/routing_instance.h"
 #include "common/solution.h"
 
@@ -106,6 +107,13 @@ public:
   /** Returns true if the cross move will make fitness better
    * (Constant time but still quite demanding) */
   bool testCrossMove(const CvrpRouteSegment &segment1, const CvrpRouteSegment &segment2);
+
+  FitnessDiff get2optMoveCost(const CvrpRouteSegment &segment);
+  FitnessDiff getExchangeMoveCost(const CvrpRouteSegment &segment1, const CvrpRouteSegment &segment2);
+  FitnessDiff getRelocateMoveCost(const CvrpRouteSegment &segment_moved, const CvrpRouteSegment &target_pos);
+  FitnessDiff getCrossMoveCost(const CvrpRouteSegment &segment1, const CvrpRouteSegment &segment2);
+
+  FitnessDiff getFitnessDiff(const CvrpIndividualStructured &other);
 
   bool assertIndividual();
 };

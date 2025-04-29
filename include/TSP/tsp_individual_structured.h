@@ -1,8 +1,10 @@
 #pragma once
 
-#include "heuristic_framework/individual.h"
 #include "common/routing_instance.h"
 #include "common/solution.h"
+#include "heuristic_framework/individual.h"
+#include "tsp_individual.h"
+#include "heuristic_framework/simulated_annealing_fitness_diff.h"
 
 struct TspIndividualSegment{
   uint start_idx;
@@ -43,7 +45,19 @@ public:
 
   bool test2optMove(const TspIndividualSegment &segment);
 
-  double get2optMoveCost(const TspIndividualSegment &segment);
+  void performSwapMove(uint idx1, uint idx2);
+
+  bool testSwapMove(uint idx1, uint idx2);
+
+  void performRelocateMove(uint idx_from, uint idx_to);
+
+  bool testRelocateMove(uint idx_from, uint idx_to);
+
+  FitnessDiff get2optMoveCost(const TspIndividualSegment &segment);
+  FitnessDiff getSwapMoveCost(uint idx1, uint idx2);
+  FitnessDiff getRelocateMoveCost(uint idx_from, uint idx_to);
+  FitnessDiff getFitnessDiff(const TspIndividualStructured &other);
+
 
   void performDoubleBridgeMove(const TspIndividualSegment &segment1, const TspIndividualSegment &segment2);
 };
