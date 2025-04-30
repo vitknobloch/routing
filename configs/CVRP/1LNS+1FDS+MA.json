@@ -2,8 +2,7 @@
   "problem": "CVRP",
   "heuristics": [
     {
-      "type": "memetic_algorithm",
-      "neighborhood": "paper_guided_LS_VRPTW"
+      "type": "memetic_algorithm"
     }
   ],
   "optal": {

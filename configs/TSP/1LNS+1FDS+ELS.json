@@ -2,8 +2,7 @@
   "problem": "TSP",
   "heuristics": [
     {
-      "type": "exhaustive_local_search",
-      "mutation": "random"
+      "type": "exhaustive_local_search"
     }
   ],
   "optal": {

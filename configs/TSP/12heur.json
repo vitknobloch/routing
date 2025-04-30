@@ -2,48 +2,40 @@
     "problem": "TSP",
     "heuristics": [
         {
-            "type": "genetic_algorithm"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "genetic_algorithm"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "genetic_algorithm"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "genetic_algorithm"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "exhaustive_local_search",
-            "mutation": "random"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "mutation": "random"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "mutation": "random"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "mutation": "random"
+            "type": "simulated_annealing"
         }
     ],
     "optal": {

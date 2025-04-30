@@ -2,20 +2,16 @@
     "problem": "CVRP",
     "heuristics": [
         {
-            "type": "local_search",
-            "mutation": "random"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "local_search",
-            "mutation": "random"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "local_search",
-            "mutation": "random"
+            "type": "exhaustive_local_search"
         },
         {
-            "type": "local_search",
-            "mutation": "random"
+            "type": "exhaustive_local_search"
         },
         {
             "type": "memetic_algorithm"
@@ -30,20 +26,16 @@
             "type": "memetic_algorithm"
         },
         {
-            "type": "exhaustive_local_search",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "exhaustive_local_search",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         }
     ],
     "optal": {

@@ -3,6 +3,7 @@
 #include "heuristic_framework/individual.h"
 #include "common/routing_instance.h"
 #include "common/solution.h"
+#include "heuristic_framework/simulated_annealing_fitness_diff.h"
 
 using uint = unsigned int;
 
@@ -84,6 +85,9 @@ private:
   uint getArrivalTime(const VrptwIndividualRoute &route, const uint &customer_idx);
   uint getEndTime(const VrptwIndividualRoute &route, const int &customer_idx);
 
+  // Pairs are end_time, time_violation_sum
+  std::pair<uint, uint> andvanceSegmentTimeViolation(const VrptwRouteSegment &segment, const uint &prev_customer, const std::pair<uint, uint> &prev_time_violation, bool terminate_on_match = false);
+
   void evaluateRoute(uint route_idx);
   inline double& capacityViolation() {return violations_[0];}
   inline double& timeViolation() {return violations_[1];}
@@ -129,4 +133,10 @@ public:
   bool testRelocateMove(const VrptwRouteSegment &segment_moved, const VrptwRouteSegment &target_pos);
   /** Returns true if the cross move will make fitness better */
   bool testCrossMove(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
+
+  FitnessDiff get2optMoveCost(const VrptwRouteSegment &segment);
+  FitnessDiff getExchangeMoveCost(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
+  FitnessDiff getRelocateMoveCost(const VrptwRouteSegment &segment_moved, const VrptwRouteSegment &target_pos);
+  FitnessDiff getCrossMoveCost(const VrptwRouteSegment &segment1, const VrptwRouteSegment &segment2);
+  FitnessDiff getFitnessDiff(const VrptwIndividualStructured &other);
 };

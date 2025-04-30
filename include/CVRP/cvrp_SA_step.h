@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "heuristic_framework/simulated_annealing_step.h"
 #include "CVRP/cvrp_structured_individual.h"

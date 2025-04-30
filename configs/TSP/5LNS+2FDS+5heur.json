@@ -9,10 +9,16 @@
         },
         {
             "type": "simulated_annealing"
+        },
+        {
+            "type": "local_search"
+        },
+        {
+            "type": "genetic_algorithm"
         }
     ],
     "optal": {
-        "LNS": 7,
+        "LNS": 5,
         "FDS": 2,
         "neighborhoodStrategy": 2
     }

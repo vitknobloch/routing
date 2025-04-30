@@ -1,8 +1,9 @@
 {
-  "problem": "TSP",
+  "problem": "VRP-TW",
   "heuristics": [
     {
-      "type": "memetic_algorithm"
+      "type": "simulated_annealing_basic",
+      "neighborhood": "paper_guided_LS_VRPTW"
     }
   ],
   "optal": {

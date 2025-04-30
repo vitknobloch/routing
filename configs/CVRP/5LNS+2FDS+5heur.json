@@ -1,5 +1,5 @@
 {
-    "problem": "TSP",
+    "problem": "CVRP",
     "heuristics": [
         {
             "type": "exhaustive_local_search"
@@ -9,10 +9,16 @@
         },
         {
             "type": "simulated_annealing"
+        },
+        {
+            "type": "local_search"
+        },
+        {
+            "type": "stochastic_ranking"
         }
     ],
     "optal": {
-        "LNS": 7,
+        "LNS": 5,
         "FDS": 2,
         "neighborhoodStrategy": 2
     }

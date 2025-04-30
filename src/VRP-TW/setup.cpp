@@ -4,11 +4,14 @@
 #include "VRP-TW/vrptw_SA_basic.h"
 #include "VRP-TW/vrptw_SA_basic_schedule.h"
 #include "VRP-TW/vrptw_SA_basic_step.h"
+#include "VRP-TW/vrptw_SA_step.h"
 #include "VRP-TW/vrptw_exhaustive_local_search.h"
 #include "VRP-TW/vrptw_memetic.h"
 #include "VRP-TW/vrptw_mutation_reinsert.h"
 #include "VRP-TW/vrptw_neighborhood.h"
 #include "VRP-TW/vrptw_pmx_crossover_structured.h"
+#include "VRP-TW/vrptw_simulated_annealing.h"
+#include "common/SA_schedule_functions.h"
 #include "common/optal_comms.h"
 #include "common/routing_instance.h"
 #include "heuristic_framework/tournament_selection.h"
@@ -34,10 +37,26 @@ SetupVRPTW::preparePortfolio(const JSON &config, const char *instance_filename) 
       auto localSearch = std::make_shared<VrptwExhaustiveLocalSearch>(instance, neighborhood);
       portfolio->addImprovingHeuristic(localSearch);
     }
-    else if(heur_config["type"] == "simulated_annealing"){
+    else if(heur_config["type"] == "simulated_annealing_basic"){
       auto step = std::make_shared<VrptwSABasicStep>();
       auto schedule = std::make_shared<VrptwSABasicSchedule>(10000, 20.0);
       auto sa = std::make_shared<VrptwSABasic>(instance, step, schedule);
+      portfolio->addImprovingHeuristic(sa);
+    }
+    else if(heur_config["type"] == "simulated_annealing"){
+      auto step = std::make_shared<VrptwSAStep>();
+      auto average_length = getAverageEdgeLength(*instance);
+      auto initial_temperature =
+          getTemperatureByTargetAcceptanceRate(average_length / 5, 0.5);
+      auto final_temperature =
+          getTemperatureByTargetAcceptanceRate(average_length / 5, 0.01);
+      auto schedule = std::make_shared<SASchedule>(
+          getExpSchedule(initial_temperature, final_temperature, 60.0), //temp
+          getEquivalentPunishmentFunction(average_length, 1.0), //vehicle
+          getEquivalentPunishmentFunction(average_length, 25.0) //constraint
+      );
+      //auto schedule = std::make_shared<SASchedule>([](double t){return 0.01;});
+      auto sa = std::make_shared<VrptwSimulatedAnnealing>(instance, step, schedule);
       portfolio->addImprovingHeuristic(sa);
     }
     else if(heur_config["type"] == "memetic_algorithm"){

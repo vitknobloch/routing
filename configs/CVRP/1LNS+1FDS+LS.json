@@ -2,8 +2,7 @@
   "problem": "CVRP",
   "heuristics": [
     {
-      "type": "local_search",
-      "mutation": "random"
+      "type": "local_search"
     }
   ],
   "optal": {

@@ -31,8 +31,8 @@ bool SASchedule::shouldAcceptSolution(const FitnessDiff &diff) {
   const double time_diff = std::chrono::duration<double>(std::chrono::steady_clock::now() - start_time_).count();
   const double temp = time_to_temp_function_(time_diff);
   double total_diff = diff.fitness +
-                      temp_to_vehicle_coeff_function_(temp) * diff.vehicles +
-                      temp_to_constraint_coeff_function_(temp) * diff.constraints;
+                      temp_to_vehicle_coeff_function_(temp) * std::max(0, diff.vehicles) +
+                      temp_to_constraint_coeff_function_(temp) * std::max(0, diff.constraints);
 
   const double accept_prob = std::exp(-total_diff / temp);
   const bool accepted = dist_(gen_) < accept_prob;

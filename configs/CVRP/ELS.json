@@ -2,8 +2,7 @@
   "problem": "CVRP",
   "heuristics": [
     {
-      "type": "exhaustive_local_search",
-      "neighborhood": "paper_guided_LS_VRPTW"
+      "type": "exhaustive_local_search"
     }
   ],
   "optal": {
