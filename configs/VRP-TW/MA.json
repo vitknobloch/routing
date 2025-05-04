@@ -2,8 +2,7 @@
   "problem": "VRP-TW",
   "heuristics": [
     {
-      "type": "memetic_algorithm",
-      "mutation": "random"
+      "type": "memetic_algorithm"
     }
   ],
   "optal": {

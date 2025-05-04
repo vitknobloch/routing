@@ -2,20 +2,16 @@
     "problem": "VRP-TW",
     "heuristics": [
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
-            "type": "memetic_algorithm",
-            "mutation": "random"
+            "type": "memetic_algorithm"
         },
         {
             "type": "exhaustive_local_search"
@@ -30,20 +26,16 @@
             "type": "exhaustive_local_search"
         },
         {
-            "type": "simulated_annealing",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "simulated_annealing",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "simulated_annealing",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         },
         {
-            "type": "simulated_annealing",
-            "neighborhood": "paper_guided_LS_VRPTW"
+            "type": "simulated_annealing"
         }
     ],
     "optal": {

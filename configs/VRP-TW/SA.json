@@ -2,8 +2,7 @@
   "problem": "VRP-TW",
   "heuristics": [
     {
-      "type": "simulated_annealing",
-      "neighborhood": "paper_guided_LS_VRPTW"
+      "type": "simulated_annealing"
     }
   ],
   "optal": {

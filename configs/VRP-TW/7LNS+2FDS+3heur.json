@@ -1,0 +1,19 @@
+{
+    "problem": "VRP-TW",
+    "heuristics": [
+        {
+            "type": "memetic_algorithm"
+        },
+        {
+            "type": "exhaustive_local_search"
+        },
+        {
+            "type": "simulated_annealing"
+        }
+    ],
+    "optal": {
+        "LNS": 7,
+        "FDS": 2,
+        "neighborhoodStrategy": 2
+    }
+}
