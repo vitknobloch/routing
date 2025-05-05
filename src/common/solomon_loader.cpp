@@ -75,7 +75,7 @@ void RoutingInstance::SolomonLoader::buildTransitionMatrix(
 
 inline uint RoutingInstance::SolomonLoader::dist(const std::pair<int, int> &n1,
                                           const std::pair<int, int> &n2) {
-  double float_dist = std::pow(n1.first - n2.first, 2) + std::pow(n1.second - n2.second, 2);
+  double float_dist = std::pow((double)(n1.first - n2.first), 2) + std::pow((double)(n1.second - n2.second), 2);
   float_dist = std::sqrt(float_dist);
   return (uint)ceil(float_dist);
 }

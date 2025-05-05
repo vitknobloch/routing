@@ -114,9 +114,9 @@ void RoutingInstance::TSPlibLoader::loadNodes(RoutingInstance &instance, std::if
 
 void RoutingInstance::TSPlibLoader::loadNodes_EUC_2D(RoutingInstance &instance,
                                                      std::ifstream &file) {
-  float dump;
-  std::unique_ptr<float[]> nodes_x = std::unique_ptr<float[]>(new float[instance.node_count_]);
-  std::unique_ptr<float[]> nodes_y = std::unique_ptr<float[]>(new float[instance.node_count_]);
+  double dump;
+  std::unique_ptr<double[]> nodes_x = std::unique_ptr<double[]>(new double[instance.node_count_]);
+  std::unique_ptr<double[]> nodes_y = std::unique_ptr<double[]>(new double[instance.node_count_]);
   for(int i = 0; i < instance.node_count_; i++){
     file >> dump;
     if(dump != i + 1.0){
@@ -139,9 +139,9 @@ void RoutingInstance::TSPlibLoader::loadNodes_EUC_2D(RoutingInstance &instance,
 
 void RoutingInstance::TSPlibLoader::loadNodes_CEIL_2D(RoutingInstance &instance,
                                                       std::ifstream &file) {
-  float dump;
-  std::unique_ptr<float[]> nodes_x = std::unique_ptr<float[]>(new float[instance.node_count_]);
-  std::unique_ptr<float[]> nodes_y = std::unique_ptr<float[]>(new float[instance.node_count_]);
+  double dump;
+  std::unique_ptr<double[]> nodes_x = std::unique_ptr<double[]>(new double[instance.node_count_]);
+  std::unique_ptr<double[]> nodes_y = std::unique_ptr<double[]>(new double[instance.node_count_]);
   for(int i = 0; i < instance.node_count_; i++){
     file >> dump;
     if(dump != i + 1.0){
@@ -164,9 +164,9 @@ void RoutingInstance::TSPlibLoader::loadNodes_CEIL_2D(RoutingInstance &instance,
 
 void RoutingInstance::TSPlibLoader::loadNodes_GEO(RoutingInstance &instance,
                                                   std::ifstream &file) {
-  float dump;
-  std::unique_ptr<float[]> nodes_x = std::unique_ptr<float[]>(new float[instance.node_count_]);
-  std::unique_ptr<float[]> nodes_y = std::unique_ptr<float[]>(new float[instance.node_count_]);
+  double dump;
+  std::unique_ptr<double[]> nodes_x = std::unique_ptr<double[]>(new double[instance.node_count_]);
+  std::unique_ptr<double[]> nodes_y = std::unique_ptr<double[]>(new double[instance.node_count_]);
   for(int i = 0; i < instance.node_count_; i++){
     file >> dump;
     if(dump != i + 1.0){

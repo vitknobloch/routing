@@ -276,7 +276,6 @@ void TspIndividualStructured::performRelocateMove(uint idx_from, uint idx_to) {
   const uint cur_to = data_[idx_to];
   const uint cur_from = data_[idx_from];
 
-
   if(idx_from < idx_to){
     for(uint i = idx_from; i < idx_to; i++){
       data_[i] = data_[i+1];
@@ -377,4 +376,18 @@ FitnessDiff TspIndividualStructured::getRelocateMoveCost(uint idx_from,
 FitnessDiff
 TspIndividualStructured::getFitnessDiff(const TspIndividualStructured &other) {
   return {.fitness = (int)total_time_ - (int)other.total_time_, .constraints = 0, .vehicles = 0};
+}
+
+bool TspIndividualStructured::assertIndividual() {
+  if(data_.size() != instance_->getNodesCount() - 1)
+    return false;
+  std::vector<bool> present(instance_->getNodesCount(), false);
+  for(uint i = 0; i < data_.size(); i++){
+    if(data_[i] == 0)
+      return false;
+    if(present[data_[i]])
+      return false;
+    present[data_[i]] = true;
+  }
+  return true;
 }

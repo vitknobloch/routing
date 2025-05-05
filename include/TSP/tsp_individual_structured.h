@@ -58,6 +58,7 @@ public:
   FitnessDiff getRelocateMoveCost(uint idx_from, uint idx_to);
   FitnessDiff getFitnessDiff(const TspIndividualStructured &other);
 
-
   void performDoubleBridgeMove(const TspIndividualSegment &segment1, const TspIndividualSegment &segment2);
+
+  bool assertIndividual();
 };

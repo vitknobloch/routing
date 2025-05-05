@@ -8,9 +8,15 @@ export function parseSolutionTSP(solution_string: string, vars: TspVars, instanc
     let solution_json = JSON.parse(solution_string)
     solution.setObjective(solution_json.objective);
     let prev_node = 0;
+    let prev_time = 1;
     for (let node of solution_json.routes[0].route_nodes.slice(1)) {
         //console.log(`${node.idx} ${node.start_time} ${node.end_time} ${instance.transitionMatrix[prev_node][node.idx]}`);
         solution.setValue(vars.visits[node.idx], node.start_time, node.end_time);
+        let arrival_time = prev_time + instance.transitionMatrix[prev_node][node.idx];
+        if (arrival_time != node.start_time) {
+            console.log(`Arrival time ${arrival_time} != start time ${node.start_time} at nodes ${prev_node} -> ${node.idx}`);
+        }
+        prev_time = node.end_time;
         prev_node = node.idx;
     }
 
