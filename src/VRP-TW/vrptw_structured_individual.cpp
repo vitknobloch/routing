@@ -110,7 +110,7 @@ std::shared_ptr<Solution> VrptwIndividualStructured::convertSolution() {
   }
 
   solution->objective = solution->travel_time_sum;
-  solution->feasible = timeViolation() == 0 && capacityViolation() == 0;
+  solution->feasible = (int)timeViolation() == 0 && (int)capacityViolation() == 0;
   solution->used_vehicles = (int)vehicles_used_;
 
   return solution;
@@ -212,9 +212,9 @@ bool VrptwIndividualStructured::betterThan(
   if(!other)
     return true;
   auto individual_ = std::static_pointer_cast<VrptwIndividualStructured>(other);
-  if(getTotalConstraintViolation() < other->getTotalConstraintViolation())
+  if((int)getTotalConstraintViolation() < (int)other->getTotalConstraintViolation())
     return true;
-  else if(getTotalConstraintViolation() == other->getTotalConstraintViolation()){
+  else if((int)getTotalConstraintViolation() == (int)other->getTotalConstraintViolation()){
     const auto &other_ = std::static_pointer_cast<VrptwIndividualStructured>(other);
     if(vehicles_used_ < other_->vehicles_used_)
       return true;

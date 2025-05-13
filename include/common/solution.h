@@ -33,6 +33,8 @@ struct Solution {
   [[nodiscard]] bool betterThan(const Solution &other) const{
     if(!feasible && other.feasible)
       return false;
+    else if(feasible && !other.feasible)
+      return true;
     if(used_vehicles > other.used_vehicles)
       return false;
     else if(used_vehicles < other.used_vehicles)

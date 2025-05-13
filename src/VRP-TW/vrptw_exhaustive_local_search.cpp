@@ -15,14 +15,12 @@ void VrptwExhaustiveLocalSearch::sendSolution(
   if(solution == nullptr || portfolio_ == nullptr)
     return;
 
-
   uint count = 0;
   for(const auto &r: solution->routes){
     if(r.route_nodes.size() > 2)
       count++;
   }
   std::cerr << "solution routes: " << count << std::endl;
-
 
   portfolio_->acceptSolution(solution);
 }
@@ -52,7 +50,8 @@ void VrptwExhaustiveLocalSearch::initialize(HeuristicPortfolio *portfolio) {
     auto individual_ = std::static_pointer_cast<VrptwIndividualStructured>(individual);
     auto solution = individual_->convertSolution();
     //std::cerr << solution->objective << " " << individual->getTotalConstraintViolation() << std::endl;
-    sendSolution(solution);
+    if(checkBetterSolution(solution))
+      sendSolution(solution);
   });
   local_search_ = std::make_shared<ExhaustiveLocalSearch>(callbacks, neighborhood_);
 }
